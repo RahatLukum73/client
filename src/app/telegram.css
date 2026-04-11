@@ -199,6 +199,7 @@
 	border-radius: 999px;
 	display: flex;
 	align-items: center;
+	align-self: center;
 	justify-content: center;
 	background: rgba(76, 121, 168, 1);
 	border: 1px solid rgba(142, 189, 237, 0.5);
@@ -243,6 +244,7 @@
 	padding: 10px 12px;
 	border: 1px solid rgba(255, 255, 255, 0.08);
 	background: rgba(255, 255, 255, 0.04);
+	flex: 1;
 }
 
 .tg-bubble-self {
