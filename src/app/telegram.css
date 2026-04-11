@@ -119,12 +119,6 @@
 	color: #fbbf24;
 }
 
-.tg-row {
-	display: flex;
-	flex-direction: column;
-	gap: 10px;
-}
-
 .tg-badge {
 	display: inline-flex;
 	padding: 6px 10px;
