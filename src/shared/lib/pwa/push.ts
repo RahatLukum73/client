@@ -11,13 +11,23 @@ function urlBase64ToUint8Array(base64String: string): Uint8Array {
 }
 
 export async function subscribeForPush(profile: ChatProfile): Promise<void> {
-	if (!('serviceWorker' in navigator)) return
-	if (!('PushManager' in window)) return
+	console.log('[Push] subscribeForPush called')
+
+	if (!('serviceWorker' in navigator)) {
+		console.warn('[Push] serviceWorker not supported')
+		return
+	}
+	if (!('PushManager' in window)) {
+		console.warn('[Push] PushManager not available')
+		return
+	}
 
 	const permission = await Notification.requestPermission()
+	console.log('[Push] Notification permission:', permission)
 	if (permission !== 'granted') return
 
 	const publicKey = import.meta.env.VITE_VAPID_PUBLIC_KEY as string | undefined
+	console.log('[Push] VAPID key present:', !!publicKey)
 	if (!publicKey) return
 
 	const reg = await navigator.serviceWorker.ready

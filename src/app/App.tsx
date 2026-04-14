@@ -6,7 +6,7 @@ import type {
 	WsServerEvent,
 	WsJoinRequestToAdmin,
 } from '../shared/api/wsProtocol'
-import { subscribeForPush} from '../shared/lib/pwa/push'
+import { subscribeForPush } from '../shared/lib/pwa/push'
 
 type Auth = {
 	jwt: string
@@ -46,17 +46,17 @@ export default function App() {
 		}
 
 		if (msg.type === 'login_success' || msg.type === 'register_success') {
-	setAuthError(null) // ✅ сброс ошибки
+			setAuthError(null) // ✅ сброс ошибки
 
-	localStorage.setItem('jwt', msg.jwt)
+			localStorage.setItem('jwt', msg.jwt)
 
-	setAuth({
-		jwt: msg.jwt,
-		userId: msg.userId,
-		isAdmin: msg.isAdmin,
-		name: msg.name,
-	})
-}
+			setAuth({
+				jwt: msg.jwt,
+				userId: msg.userId,
+				isAdmin: msg.isAdmin,
+				name: msg.name,
+			})
+		}
 
 		// 📊 STATUS
 
@@ -142,33 +142,35 @@ export default function App() {
 		send({ type: 'resume', token: jwt })
 	}, [wsStatus])
 
-useEffect(() => {
-  if (!auth?.jwt) return
+	useEffect(() => {
+		console.log('[App] auth changed, jwt present:', !!auth?.jwt)
+		if (!auth?.jwt) return
 
-  subscribeForPush({
-    sessionToken: auth.jwt, // maps to session_token в БД
-    name: auth.name,
-    userId: auth.userId,
-    isAdmin: auth.isAdmin
-  })
-}, [auth])
+		console.log('[App] Calling subscribeForPush')
+		subscribeForPush({
+			sessionToken: auth.jwt, // maps to session_token в БД
+			name: auth.name,
+			userId: auth.userId,
+			isAdmin: auth.isAdmin,
+		})
+	}, [auth])
 
 	// 🔐 LOGIN / REGISTER
-const handleLogin = (name: string, password: string) => {
-	send({
-		type: 'login_request',
-		name,
-		password,
-	})
-}
+	const handleLogin = (name: string, password: string) => {
+		send({
+			type: 'login_request',
+			name,
+			password,
+		})
+	}
 
-const handleRegister = (name: string, password: string) => {
-	send({
-		type: 'register_request',
-		name,
-		password,
-	})
-}
+	const handleRegister = (name: string, password: string) => {
+		send({
+			type: 'register_request',
+			name,
+			password,
+		})
+	}
 
 	const handleLogout = () => {
 		localStorage.removeItem('jwt')
