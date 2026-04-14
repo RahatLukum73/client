@@ -32,10 +32,19 @@ export async function subscribeForPush(profile: ChatProfile): Promise<void> {
 		}))
 
 	// Persist subscription on server.
-		const API_URL = import.meta.env.VITE_API_URL;
+	const API_URL = import.meta.env.VITE_API_URL
 
-	const res = await fetch(`${API_URL}/api/push/subscribe`,
-	{
+	if (!API_URL) {
+		console.warn('[Push] VITE_API_URL is not set')
+		return
+	}
+
+	console.log(
+		'[Push] Sending subscription to:',
+		`${API_URL}/api/push/subscribe`
+	)
+
+	const res = await fetch(`${API_URL}/api/push/subscribe`, {
 		method: 'POST',
 		headers: { 'content-type': 'application/json' },
 		body: JSON.stringify({
@@ -47,5 +56,10 @@ export async function subscribeForPush(profile: ChatProfile): Promise<void> {
 		}),
 	})
 
-	if (!res.ok) return
+	if (!res.ok) {
+		console.error('[Push] Subscribe failed:', res.status, res.statusText)
+		return
+	}
+
+	console.log('[Push] Subscribed successfully')
 }
