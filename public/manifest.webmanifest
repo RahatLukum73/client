@@ -1,17 +1,17 @@
 {
-  "name": "Xutor Chat",
-  "short_name": "Xutor",
-  "description": "Realtime чат с авторизацией и админ-панелью",
-  "start_url": "/",
-  "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#ffffff",
-  "icons": [
-    {
-      "src": "/favicon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
-    }
-  ]
+	"name": "Xutor Chat",
+	"short_name": "Xutor",
+	"description": "Realtime чат с авторизацией и админ-панелью",
+	"start_url": "/",
+	"display": "standalone",
+	"background_color": "#ffffff",
+	"theme_color": "#ffffff",
+	"icons": [
+		{
+			"src": "/favicon.png",
+			"sizes": "any",
+			"type": "image/png",
+			"purpose": "any maskable"
+		}
+	]
 }
