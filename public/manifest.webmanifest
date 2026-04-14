@@ -1,17 +1,17 @@
 {
-  "name": "Xutor",
+  "name": "Xutor Chat",
   "short_name": "Xutor",
-  "start_url": "/?source=pwa",
-  "scope": "/",
+  "description": "Realtime чат с авторизацией и админ-панелью",
+  "start_url": "/",
   "display": "standalone",
-  "background_color": "#0b1220",
-  "theme_color": "#111827",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
   "icons": [
     {
-      "src": "/favicon.png",
+      "src": "/favicon.svg",
       "sizes": "any",
-      "type": "image/png"
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
     }
   ]
 }
-
