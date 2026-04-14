@@ -32,12 +32,17 @@ export async function subscribeForPush(profile: ChatProfile): Promise<void> {
 		}))
 
 	// Persist subscription on server.
-	const API_URL = import.meta.env.VITE_API_URL
+	const wsUrl = import.meta.env.VITE_WS_URL as string | undefined
 
-	if (!API_URL) {
-		console.warn('[Push] VITE_API_URL is not set')
+	if (!wsUrl) {
+		console.warn('[Push] VITE_WS_URL is not set')
 		return
 	}
+
+	// Convert wss:// → https:// (same host, different protocol)
+	const API_URL = wsUrl
+		.replace('wss://', 'https://')
+		.replace('ws://', 'http://')
 
 	console.log(
 		'[Push] Sending subscription to:',
