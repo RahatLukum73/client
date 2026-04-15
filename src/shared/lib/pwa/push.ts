@@ -24,7 +24,10 @@ export async function subscribeForPush(profile: ChatProfile): Promise<void> {
 
 	const permission = await Notification.requestPermission()
 	console.log('[Push] Notification permission:', permission)
-	if (permission !== 'granted') return
+	if (permission !== 'granted') {
+		console.warn('[Push] Notifications not granted, skipping subscription')
+		return
+	}
 
 	const publicKey = import.meta.env.VITE_VAPID_PUBLIC_KEY as string | undefined
 	console.log('[Push] VAPID key present:', !!publicKey)
@@ -63,7 +66,7 @@ export async function subscribeForPush(profile: ChatProfile): Promise<void> {
 		method: 'POST',
 		headers: { 'content-type': 'application/json' },
 		body: JSON.stringify({
-			sessionToken: profile.sessionToken,
+			token: profile.sessionToken,
 			subscription: {
 				endpoint: subscription.endpoint,
 				keys: subscription.toJSON(),
