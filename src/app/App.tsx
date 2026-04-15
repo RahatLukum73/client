@@ -147,12 +147,7 @@ export default function App() {
 		if (!auth?.jwt) return
 
 		console.log('[App] Calling subscribeForPush')
-		subscribeForPush({
-			sessionToken: auth.jwt, // maps to session_token в БД
-			name: auth.name,
-			userId: auth.userId,
-			isAdmin: auth.isAdmin,
-		})
+		subscribeForPush(auth.jwt)
 	}, [auth])
 
 	// 🔐 LOGIN / REGISTER

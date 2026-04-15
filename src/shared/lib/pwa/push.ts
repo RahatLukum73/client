@@ -1,5 +1,3 @@
-import type { ChatProfile } from '../../../features/auth/model/profile'
-
 function urlBase64ToUint8Array(base64String: string): Uint8Array {
 	const padding = '='.repeat((4 - (base64String.length % 4)) % 4)
 	const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/')
@@ -10,7 +8,7 @@ function urlBase64ToUint8Array(base64String: string): Uint8Array {
 	return outputArray
 }
 
-export async function subscribeForPush(profile: ChatProfile): Promise<void> {
+export async function subscribeForPush(jwtToken: string): Promise<void> {
 	console.log('[Push] subscribeForPush called')
 
 	if (!('serviceWorker' in navigator)) {
@@ -64,9 +62,11 @@ export async function subscribeForPush(profile: ChatProfile): Promise<void> {
 
 	const res = await fetch(`${API_URL}/api/push/subscribe`, {
 		method: 'POST',
-		headers: { 'content-type': 'application/json' },
+		headers: {
+			'content-type': 'application/json',
+			Authorization: `Bearer ${jwtToken}`,
+		},
 		body: JSON.stringify({
-			token: profile.sessionToken,
 			subscription: {
 				endpoint: subscription.endpoint,
 				keys: subscription.toJSON(),
