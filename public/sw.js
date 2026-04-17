@@ -65,8 +65,6 @@ self.addEventListener('push', (event) => {
 			} catch {
 				data = {}
 			}
-
-			console.log('[SW] raw data:', event.data)
 			console.log('[SW] parsed data:', data)
 
 			const title = data.title || 'Уведомление'
