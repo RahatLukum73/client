@@ -56,6 +56,7 @@ function safeJson(text) {
 }
 
 self.addEventListener('push', (event) => {
+	console.log('[SW] push received', event)
 	event.waitUntil(
 		(async () => {
 			let data = {}
@@ -64,6 +65,9 @@ self.addEventListener('push', (event) => {
 			} catch {
 				data = {}
 			}
+
+			console.log('[SW] raw data:', event.data)
+			console.log('[SW] parsed data:', data)
 
 			const title = data.title || 'Уведомление'
 			const body = data.body || ''

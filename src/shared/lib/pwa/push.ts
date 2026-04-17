@@ -34,12 +34,13 @@ export async function subscribeForPush(jwtToken: string): Promise<void> {
 	const reg = await navigator.serviceWorker.ready
 	const existing = await reg.pushManager.getSubscription()
 
+	const applicationServerKey = urlBase64ToUint8Array(publicKey)
+
 	const subscription =
 		existing ??
 		(await reg.pushManager.subscribe({
 			userVisibleOnly: true,
-			applicationServerKey: urlBase64ToUint8Array(publicKey)
-				.buffer as ArrayBuffer,
+			applicationServerKey: applicationServerKey as unknown as ArrayBuffer,
 		}))
 
 	// Persist subscription on server.
