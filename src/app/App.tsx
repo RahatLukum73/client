@@ -38,7 +38,7 @@ export default function App() {
 				jwt: msg.jwt,
 				userId: msg.userId,
 				isAdmin: msg.isAdmin,
-				name: msg.name,
+				name: msg.name.trim(),
 			})
 		}
 		if (msg.type === 'auth_error') {
@@ -54,7 +54,7 @@ export default function App() {
 				jwt: msg.jwt,
 				userId: msg.userId,
 				isAdmin: msg.isAdmin,
-				name: msg.name,
+				name: msg.name.trim(),
 			})
 		}
 
@@ -87,7 +87,7 @@ export default function App() {
 					{
 						type: 'join_request',
 						userId: msg.userId,
-						name: msg.name,
+						name: msg.name.trim(),
 					},
 				]
 			})
