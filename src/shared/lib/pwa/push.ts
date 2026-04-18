@@ -22,18 +22,19 @@ export async function subscribeForPush(jwtToken: string): Promise<void> {
 
 	const reg = await navigator.serviceWorker.ready
 
-	let subscription = await reg.pushManager.getSubscription()
+	const existing = await reg.pushManager.getSubscription()
+
+	if (existing) {
+		console.log('[Push] unsubscribe old subscription')
+		await existing.unsubscribe()
+	}
 
 	const applicationServerKey = urlBase64ToUint8Array(publicKey)
 
-	if (!subscription) {
-		subscription = await reg.pushManager.subscribe({
-			userVisibleOnly: true,
-			applicationServerKey: applicationServerKey as unknown as BufferSource,
-		})
-	} else {
-		console.log('[Push] already subscribed')
-	}
+	const subscription = await reg.pushManager.subscribe({
+		userVisibleOnly: true,
+		applicationServerKey: applicationServerKey as unknown as BufferSource,
+	})
 
 	const API_URL = import.meta.env.VITE_WS_URL.replace(
 		'wss://',
