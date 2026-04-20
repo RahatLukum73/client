@@ -72,8 +72,9 @@ self.addEventListener('push', (event) => {
 			const options = {
 				body,
 				data: data.data || {},
-				// Provide a visible icon if browser supports it.
 				icon: '/favicon.png',
+				tag: 'chat',
+				renotify: true,
 			}
 
 			await self.registration.showNotification(title, options)
