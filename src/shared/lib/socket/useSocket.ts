@@ -25,6 +25,16 @@ let singleton: {
 	pendingClientMessages: [],
 }
 
+const disconnect = () => {
+	if (singleton.ws) {
+		singleton.ws.onclose = null
+		singleton.ws.onerror = null
+		singleton.ws.close()
+		singleton.ws = null
+		setStatus('disconnected')
+	}
+}
+
 let reconnectAttempts = 0
 let reconnectTimer: number | null = null
 const MAX_RECONNECT_ATTEMPTS = 12
@@ -191,5 +201,5 @@ export function useSocket(url: string, onEvent?: ServerEventHandler) {
 		}
 	}, [])
 
-	return { status, connect, send, flushOutbox }
+	return { status, connect, send, flushOutbox, disconnect }
 }

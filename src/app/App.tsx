@@ -29,6 +29,7 @@ export default function App() {
 		status: wsStatus,
 		connect,
 		send,
+		disconnect,
 	} = useSocket(import.meta.env.VITE_WS_URL, (msg: WsServerEvent) => {
 		// 🔐 AUTH
 		if (msg.type === 'login_success' || msg.type === 'register_success') {
@@ -168,6 +169,7 @@ export default function App() {
 	}
 
 	const handleLogout = () => {
+		disconnect()
 		localStorage.removeItem('jwt')
 		setAuth(null)
 		setStatus('pending')
