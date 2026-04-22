@@ -181,5 +181,15 @@ export function useSocket(url: string, onEvent?: ServerEventHandler) {
 		await idbClearOutbox()
 	}
 
+	useEffect(() => {
+		return () => {
+			if (singleton.ws) {
+				singleton.ws.close()
+				singleton.ws = null
+				singleton.status = 'disconnected'
+			}
+		}
+	}, [])
+
 	return { status, connect, send, flushOutbox }
 }
