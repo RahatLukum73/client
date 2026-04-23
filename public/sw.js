@@ -69,8 +69,19 @@ self.addEventListener('push', (event) => {
 
 			const title = data.title || 'Уведомление'
 			const body = data.body || ''
+
+			let formattedTime = ''
+			if (data.time) {
+				const date = new Date(data.time)
+				const hours = date.getHours().toString().padStart(2, '0')
+				const minutes = date.getMinutes().toString().padStart(2, '0')
+				formattedTime = `${hours}:${minutes}`
+			}
+
+			const bodyWithTime = formattedTime ? `${body}\n${formattedTime}` : body
+
 			const options = {
-				body,
+				body: bodyWithTime,
 				data: data.data || {},
 				icon: '/favicon.png',
 				tag: 'chat',

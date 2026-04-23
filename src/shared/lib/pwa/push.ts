@@ -26,7 +26,6 @@ export async function subscribeForPush(jwtToken: string): Promise<void> {
 
 	if (existing) {
 		console.log('[Push] unsubscribe old subscription')
-		await existing.unsubscribe()
 	}
 
 	const applicationServerKey = urlBase64ToUint8Array(publicKey)
