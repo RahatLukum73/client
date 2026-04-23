@@ -125,7 +125,7 @@ async function flushOutboxInternal() {
 	if (!singleton.ws || singleton.ws.readyState !== WebSocket.OPEN) return
 	const items = await idbGetOutbox()
 	if (items.length === 0) return
-
+	
 	for (const item of items) {
 		const payload: WsClientMessage = {
 			type: 'send_message',
@@ -143,9 +143,9 @@ async function flushOutboxInternal() {
 
 export function useSocket(url: string, onEvent?: ServerEventHandler) {
 	const [status, setLocalStatus] = useState<SocketStatus>(singleton.status)
-
+	
 	const stableOnEvent = useMemo(() => onEvent, [onEvent])
-
+	
 	useEffect(() => {
 		if (!stableOnEvent) return
 		singleton.listeners.add(stableOnEvent)
@@ -153,7 +153,7 @@ export function useSocket(url: string, onEvent?: ServerEventHandler) {
 			singleton.listeners.delete(stableOnEvent)
 		}
 	}, [stableOnEvent])
-
+	
 	useEffect(() => {
 		let timer: number | null = null
 		const tick = () => setLocalStatus(singleton.status)
@@ -161,6 +161,26 @@ export function useSocket(url: string, onEvent?: ServerEventHandler) {
 		tick()
 		return () => {
 			if (timer) window.clearInterval(timer)
+			}
+	}, [])
+	
+	useEffect(() => {
+		const sendVisibility = () => {
+			if (!singleton.ws || singleton.ws.readyState !== WebSocket.OPEN) return
+	
+			singleton.ws.send(
+				JSON.stringify({
+					type: 'visibility',
+					visible: document.visibilityState === 'visible',
+				})
+			)
+		}
+		sendVisibility()
+	
+		document.addEventListener('visibilitychange', sendVisibility)
+	
+		return () => {
+			document.removeEventListener('visibilitychange', sendVisibility)
 		}
 	}, [])
 
@@ -200,6 +220,7 @@ export function useSocket(url: string, onEvent?: ServerEventHandler) {
 			}
 		}
 	}, [])
+
 
 	return { status, connect, send, flushOutbox, disconnect }
 }
