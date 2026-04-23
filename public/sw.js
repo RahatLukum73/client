@@ -55,6 +55,10 @@ function safeJson(text) {
 	}
 }
 
+let notificationCount = 0
+let lastNotificationBody = ''
+let lastNotificationTime = ''
+
 self.addEventListener('push', (event) => {
 	console.log('[SW] push received', event)
 	event.waitUntil(
@@ -78,10 +82,19 @@ self.addEventListener('push', (event) => {
 				formattedTime = `${hours}:${minutes}`
 			}
 
-			const bodyWithTime = formattedTime ? `${body}\n${formattedTime}` : body
+			// Обновляем счётчик и сохраняем последнее сообщение
+			notificationCount += 1
+			lastNotificationBody = body
+			lastNotificationTime = formattedTime
+
+			// Формируем итоговое тело
+			let summaryBody = `${lastNotificationBody}\n${lastNotificationTime}`
+			if (notificationCount > 1) {
+				summaryBody = `${lastNotificationBody}\n${lastNotificationTime} (+${notificationCount - 1})`
+			}
 
 			const options = {
-				body: bodyWithTime,
+				body: summaryBody,
 				data: data.data || {},
 				icon: '/favicon.png',
 				tag: 'chat',
@@ -96,6 +109,7 @@ self.addEventListener('push', (event) => {
 self.addEventListener('notificationclick', (event) => {
 	event.waitUntil(
 		(async () => {
+			notificationCount = 0
 			try {
 				event.notification.close()
 			} catch {}
