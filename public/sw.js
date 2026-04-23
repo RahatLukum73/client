@@ -1,5 +1,7 @@
 const CACHE_NAME = 'chatt-cache-v1'
 const CORE_ASSETS = ['/']
+let unreadMessages = []
+const MAX_STORED = 10
 
 self.addEventListener('install', (event) => {
 	self.skipWaiting()
@@ -59,7 +61,6 @@ self.addEventListener('push', (event) => {
 			}
 			console.log('[SW] parsed data:', data)
 
-			const title = data.title || 'Уведомление'
 			const body = data.body || ''
 
 			let formattedTime = ''
@@ -70,18 +71,34 @@ self.addEventListener('push', (event) => {
 				formattedTime = `${hours}:${minutes}`
 			}
 
-			const bodyWithTime = formattedTime ? `${body}\n${formattedTime}` : body
+			// Добавляем в массив непрочитанных
+			unreadMessages.push({
+				body,
+				time: formattedTime,
+			})
 
-			// Уникальный тег для каждого уведомления
-			const uniqueTag = `chat-msg-${Date.now()}-${Math.random().toString(36).slice(2)}`
+			// Ограничиваем размер
+			if (unreadMessages.length > MAX_STORED) {
+				unreadMessages = unreadMessages.slice(-MAX_STORED)
+			}
+
+			const count = unreadMessages.length
+			const last = unreadMessages[unreadMessages.length - 1]
+
+			// Формируем сводное уведомление
+			const title =
+				count === 1 ? 'Новое сообщение' : `Новые сообщения (${count})`
+
+			const summaryBody =
+				count === 1
+					? `${last.body}\n${last.time}`
+					: `${last.body}\n${last.time}\n+ ещё ${count - 1}`
 
 			const options = {
-				body: bodyWithTime,
-				data: {
-					group: 'chat-group',
-				},
+				body: summaryBody,
+				data: { count },
 				icon: '/favicon.png',
-				tag: uniqueTag,
+				tag: 'chat-summary',
 				renotify: true,
 			}
 
@@ -93,15 +110,12 @@ self.addEventListener('push', (event) => {
 self.addEventListener('notificationclick', (event) => {
 	event.waitUntil(
 		(async () => {
-			// Закрываем все уведомления из чат-группы
-			const notifications = await self.registration.getNotifications()
-			for (const notification of notifications) {
-				if (notification.tag && notification.tag.startsWith('chat-msg-')) {
-					try {
-						notification.close()
-					} catch {}
-				}
-			}
+			// Очищаем все непрочитанные
+			unreadMessages = []
+
+			try {
+				event.notification.close()
+			} catch {}
 
 			const clientList = await self.clients.matchAll({
 				type: 'window',
