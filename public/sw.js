@@ -47,18 +47,6 @@ self.addEventListener('fetch', (event) => {
 	)
 })
 
-function safeJson(text) {
-	try {
-		return JSON.parse(text)
-	} catch {
-		return null
-	}
-}
-
-let notificationCount = 0
-let lastNotificationBody = ''
-let lastNotificationTime = ''
-
 self.addEventListener('push', (event) => {
 	console.log('[SW] push received', event)
 	event.waitUntil(
@@ -82,22 +70,18 @@ self.addEventListener('push', (event) => {
 				formattedTime = `${hours}:${minutes}`
 			}
 
-			// Обновляем счётчик и сохраняем последнее сообщение
-			notificationCount += 1
-			lastNotificationBody = body
-			lastNotificationTime = formattedTime
+			const bodyWithTime = formattedTime ? `${body}\n${formattedTime}` : body
 
-			// Формируем итоговое тело
-			let summaryBody = `${lastNotificationBody}\n${lastNotificationTime}`
-			if (notificationCount > 1) {
-				summaryBody = `${lastNotificationBody}\n${lastNotificationTime} (+${notificationCount - 1})`
-			}
+			// Уникальный тег для каждого уведомления
+			const uniqueTag = `chat-msg-${Date.now()}-${Math.random().toString(36).slice(2)}`
 
 			const options = {
-				body: summaryBody,
-				data: data.data || {},
+				body: bodyWithTime,
+				data: {
+					group: 'chat-group',
+				},
 				icon: '/favicon.png',
-				tag: 'chat',
+				tag: uniqueTag,
 				renotify: true,
 			}
 
@@ -109,10 +93,15 @@ self.addEventListener('push', (event) => {
 self.addEventListener('notificationclick', (event) => {
 	event.waitUntil(
 		(async () => {
-			notificationCount = 0
-			try {
-				event.notification.close()
-			} catch {}
+			// Закрываем все уведомления из чат-группы
+			const notifications = await self.registration.getNotifications()
+			for (const notification of notifications) {
+				if (notification.tag && notification.tag.startsWith('chat-msg-')) {
+					try {
+						notification.close()
+					} catch {}
+				}
+			}
 
 			const clientList = await self.clients.matchAll({
 				type: 'window',
