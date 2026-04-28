@@ -1,0 +1,138 @@
+/* MessageComposer.module.css */
+
+.composerWrapper {
+  padding: 12px 16px 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.composer {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+}
+
+.inputContainer {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.inputComposer {
+  height: 46px;
+  padding: 0 12px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #e5e7eb;
+  outline: none;
+  font-size: 14px;
+  width: 100%;
+}
+
+.inputComposer:disabled {
+  opacity: 0.6;
+}
+
+.inputComposer::placeholder {
+  color: rgba(229, 231, 235, 0.5);
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.attachButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #e5e7eb;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.attachButton:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.attachButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.buttonSend {
+  height: 46px;
+  padding: 0 16px;
+  border-radius: 10px;
+  background: rgba(82, 136, 193, 1);
+  border: 0;
+  color: white;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.buttonSend:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.buttonSend:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.previewContainer {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.previewItem {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.previewImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.removeButton {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.7);
+  border: none;
+  color: white;
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.removeButton:hover {
+  background: rgba(0, 0, 0, 0.9);
+}
+
+.fileInput {
+  display: none;
+}

@@ -1,0 +1,138 @@
+/* Header.module.css */
+
+.header {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	z-index: 100;
+	padding: 12px 16px;
+	display: flex;
+	justify-content: space-between;
+	gap: 12px;
+	align-items: center;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+	background: rgba(11, 18, 32, 0.95);
+	backdrop-filter: blur(8px);
+}
+
+.headerLeft {
+	display: flex;
+	gap: 10px;
+	align-items: center;
+}
+
+.headerRight {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.nav {
+	display: flex;
+	gap: 8px;
+}
+
+.navButton {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 8px 12px;
+	border: none;
+	background: transparent;
+	color: #e5e7eb;
+	border-radius: 10px;
+	cursor: pointer;
+	text-decoration: none;
+	transition: all 0.2s ease;
+	min-width: 60px;
+	gap: 4px;
+}
+
+.navButton:hover {
+	transform: scale(1.05);
+	background: rgba(255, 255, 255, 0.05);
+}
+
+.navButton.active {
+	background: rgba(255, 255, 255, 0.1);
+}
+
+.navButton .icon {
+	font-size: 20px;
+	margin-bottom: 2px;
+}
+
+.navButton .label {
+	font-size: 12px;
+	font-weight: 600;
+}
+
+.avatar {
+	width: 46px;
+	height: 46px;
+	border-radius: 999px;
+	display: flex;
+	align-items: center;
+	align-self: center;
+	justify-content: center;
+	background: rgba(76, 121, 168, 1);
+	border: 1px solid rgba(142, 189, 237, 0.5);
+	color: #ddd6fe;
+	font-weight: 800;
+	font-size: 18px;
+}
+
+.userInfo {
+	display: flex;
+	flex-direction: column;
+}
+
+.userName {
+	font-weight: 700;
+	font-size: 16px;
+}
+
+.admirRow {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.isAdmin {
+	align-items: center;
+	font-size: 12px;
+	width: fit-content;
+	color: #93c5fd;
+}
+
+
+.status {
+	font-size: 12px;
+	color: rgba(229, 231, 235, 0.75);
+	align-self: center;
+}
+
+.status.online {
+	color: #10b981;
+}
+
+.status.offline {
+	color: rgba(239, 68, 68, 0.8);
+}
+
+.status.connecting {
+	color: #fbbf24;
+}
+
+.notificationDot {
+	position: absolute;
+	top: -2px;
+	right: -2px;
+	width: 8px;
+	height: 8px;
+	background: #ef4444;
+	border-radius: 50%;
+	border: 2px solid #0b1220;
+}

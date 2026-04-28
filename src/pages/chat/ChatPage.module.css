@@ -1,0 +1,14 @@
+/* ChatPage.module.css */
+
+.chatShell {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	overflow: hidden;
+}
+
+.messagesWrap {
+	flex: 1;
+	overflow-y: auto;
+	padding: 14px 10px 0;
+}

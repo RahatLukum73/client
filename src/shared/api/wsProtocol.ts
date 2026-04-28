@@ -31,6 +31,7 @@ export type WsClientSendMessage = {
 	type: 'send_message'
 	messageId: string
 	text: string
+	attachmentIds?: string[]
 }
 
 export type WsClientDeleteMessage = {
@@ -44,11 +45,11 @@ export type WsClientKickUser = {
 }
 
 export type WsClientAdminClearMessages = {
-  type: "admin_clear_messages";
+	type: 'admin_clear_messages'
 }
 
 export type WsClientAdminClearUsers = {
-  type: "admin_clear_users";
+	type: 'admin_clear_users'
 }
 
 export type WsClientMessage =
@@ -65,11 +66,22 @@ export type WsClientMessage =
 
 // ================= SERVER =================
 
+export type WsAttachment = {
+	id: string
+	url: string
+	filename: string
+	mimeType: string
+	size: number
+	width?: number
+	height?: number
+}
+
 export type WsHistoryItem = {
 	id: string
 	author: { id: string; name: string; isAdmin?: boolean }
 	text: string
 	timestamp: string
+	attachments?: WsAttachment[]
 }
 
 // 🔐 AUTH
@@ -145,7 +157,7 @@ export type WsAdminNotice = {
 }
 
 export type WsAdminClearUsers = {
-  type: "admin_clear_users";
+	type: 'admin_clear_users'
 }
 
 // ================= UNION =================

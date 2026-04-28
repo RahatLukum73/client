@@ -1,0 +1,140 @@
+/* SettingsPage.module.css */
+
+.container {
+	padding: 16px;
+}
+
+.title {
+	margin: 0 0 20px 0;
+	font-size: 24px;
+	font-weight: 700;
+}
+
+.adminSection {
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	border-radius: 14px;
+	padding: 16px;
+	background: rgba(255, 255, 255, 0.02);
+	margin-bottom: 20px;
+}
+
+.sectionTitle {
+	font-weight: 800;
+	margin-bottom: 12px;
+	font-size: 18px;
+}
+
+.sectionSubtitle {
+	font-weight: 700;
+	margin-bottom: 12px;
+	font-size: 16px;
+	color: rgba(229, 231, 235, 0.9);
+}
+
+.buttonGroup {
+	display: flex;
+	gap: 8px;
+	margin-bottom: 16px;
+	flex-wrap: wrap;
+}
+
+.button {
+	height: 44px;
+	padding: 0 16px;
+	border-radius: 10px;
+	background: rgba(82, 136, 193, 1);
+	border: 0;
+	color: white;
+	font-weight: 600;
+	cursor: pointer;
+	transition: opacity 0.2s;
+}
+
+.button:hover {
+	opacity: 0.9;
+}
+
+.buttonDanger {
+	background: rgba(239, 68, 68, 0.15);
+	border: 1px solid rgba(239, 68, 68, 0.35);
+	color: #fca5a5;
+}
+
+.buttonFullWidth {
+	width: 100%;
+}
+
+.infoText {
+	color: rgba(229, 231, 235, 0.75);
+	font-size: 14px;
+	line-height: 1.5;
+	margin-bottom: 12px;
+}
+
+.accountSection {
+	margin-top: 24px;
+}
+
+.settingItem {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 12px 0;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.settingLabel {
+	font-size: 14px;
+	color: rgba(229, 231, 235, 0.9);
+}
+
+.toggleSwitch {
+	position: relative;
+	display: inline-block;
+	width: 50px;
+	height: 24px;
+}
+
+.toggleInput {
+	opacity: 0;
+	width: 0;
+	height: 0;
+}
+
+.toggleSlider {
+	position: absolute;
+	cursor: pointer;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: rgba(255, 255, 255, 0.1);
+	transition: 0.2s;
+	border-radius: 24px;
+}
+
+.toggleSlider:before {
+	position: absolute;
+	content: '';
+	height: 16px;
+	width: 16px;
+	left: 4px;
+	bottom: 4px;
+	background-color: white;
+	transition: 0.2s;
+	border-radius: 50%;
+}
+
+.toggleInput:checked + .toggleSlider {
+	background-color: rgba(82, 136, 193, 1);
+}
+
+.toggleInput:checked + .toggleSlider:before {
+	transform: translateX(26px);
+}
+
+.settingDescription {
+	font-size: 12px;
+	color: rgba(229, 231, 235, 0.6);
+	margin-top: 4px;
+}

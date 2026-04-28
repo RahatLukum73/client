@@ -1,397 +1,64 @@
-/* Telegram-like minimal UI (mobile-first) */
+/* Глобальные стили для всего приложения */
+
+/* Reset */
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+/* Глобальный скроллбар */
+::-webkit-scrollbar {
+	width: 12px;
+	height: 12px;
+}
+
+::-webkit-scrollbar-track {
+	background: rgba(255, 255, 255, 0.05);
+	border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+	background: rgba(255, 255, 255, 0.15);
+	border-radius: 6px;
+	border: 3px solid rgba(255, 255, 255, 0.05);
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background: rgba(255, 255, 255, 0.25);
+}
+
+::-webkit-scrollbar-corner {
+	background: transparent;
+}
+
+/* Для Firefox */
+* {
+	scrollbar-width: thin;
+	scrollbar-color: rgba(255, 255, 255, 0.15) rgba(255, 255, 255, 0.05);
+}
+
+html,
+body {
+	height: 100%;
+	overflow: hidden;
+	font-family:
+		-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
+		sans-serif;
+}
 
 #root {
 	width: 100%;
+	height: 100svh;
 	max-width: none;
 	margin: 0;
 	border: 0;
 	text-align: left;
-	min-height: 100svh;
-	background: #0b1220;
-}
-
-.tg-shell {
-	min-height: 100svh;
-	background: #0b1220;
-	color: #e5e7eb;
 	display: flex;
 	flex-direction: column;
-	gap: 8px;
 }
 
-.tg-card {
-	margin: 16px;
-	padding: 16px;
-	border: 1px solid rgba(255, 255, 255, 0.08);
-	border-radius: 14px;
-	background: rgba(255, 255, 255, 0.03);
-}
-
-.tg-title {
-	margin: 0 0 12px 0;
-	font-size: 28px;
-	letter-spacing: -0.4px;
-}
-
-.tg-auth {
-	display: flex;
-	gap: 8px;
-	margin: 0 0 12px 0;
-}
-
-.tg-auth button {
-	background: none;
-	border: none;
-	font-size: 14px;
-	cursor: pointer;
-	color: #888;
-}
-
-.tg-auth button.active {
-	color: rgba(82, 136, 193, 1);
-	border-bottom: 2px solid rgba(82, 136, 193, 1);
-	font-weight: 500;
-}
-
-.tg-label {
-	display: flex;
-	flex-direction: column;
-	gap: 8px;
-	font-size: 14px;
-	opacity: 0.95;
-	margin-bottom: 8px;
-	input {
-		font-size: 14px;
-		padding: 4px;
-		border-radius: 4px;
-		border: none;
-	}
-	input:focus {
-		background: #555555;
-		outline: none;
-	}
-}
-
-.tg-input {
-	height: 44px;
-	padding: 0 12px;
-	border-radius: 10px;
-	background: rgba(255, 255, 255, 0.05);
-	border: 1px solid rgba(255, 255, 255, 0.1);
-	color: #e5e7eb;
-	outline: none;
-}
-
-.tg-input:disabled {
-	opacity: 0.6;
-}
-
-.tg-button {
-	height: 44px;
-	padding: 0 16px;
-	border-radius: 10px;
-	background: rgba(82, 136, 193, 1);
-	border: 0;
-	color: white;
-	font-weight: 600;
-}
-
-.tg-button:disabled {
-	opacity: 0.5;
-}
-
-.tg-header-top {
-	display: flex;
-	justify-content: space-between;
-	gap: 8px;
-}
-
-.tg-text {
-	font-size: 14px;
-}
-
-.tg-text-muted {
-	color: rgba(229, 231, 235, 0.75);
-	font-size: 12px;
-}
-
-.tg-text-warn {
-	color: #fbbf24;
-}
-
-.tg-badge {
-	display: inline-flex;
-	padding: 6px 10px;
-	border-radius: 999px;
-	font-size: 12px;
-	width: fit-content;
-	border: 1px solid rgba(255, 255, 255, 0.12);
-}
-.tg-badge-info {
-	background: rgba(59, 130, 246, 0.12);
-	color: #93c5fd;
-}
-
-.tg-chat-shell {
-	height: 100svh;
-}
-
-.tg-header {
-	padding: 12px 16px;
-	display: flex;
-	justify-content: space-between;
-	gap: 12px;
-	align-items: center;
-	border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-	background: rgba(255, 255, 255, 0.02);
-}
-
-.tg-header-left {
-	display: flex;
-	gap: 10px;
-	align-items: center;
-}
-
-.tg-header-right {
-	display: flex;
-	flex-direction: column;
-	gap: 10px;
-}
-
-.tg-header-button {
-	display: flex;
-	gap: 10px;
-	button {
-		border-radius: 4px;
-		border: none;
-	}
-}
-
-.tg-badge-dot {
-	position: absolute;
-	top: 2px;
-	right: 2px;
-	width: 8px;
-	height: 8px;
-	background: red;
-	border-radius: 50%;
-}
-
-.tg-header-title {
-	display: flex;
-	flex-direction: column;
-	font-weight: 700;
-}
-
-.tg-badge {
-	margin-top: 2px;
-}
-
-.tg-avatar {
-	width: 34px;
-	height: 34px;
-	border-radius: 999px;
-	display: flex;
-	align-items: center;
-	align-self: center;
-	justify-content: center;
-	background: rgba(76, 121, 168, 1);
-	border: 1px solid rgba(142, 189, 237, 0.5);
-	color: #ddd6fe;
-	font-weight: 800;
-}
-
-.tg-avatar-big {
-	width: 46px;
-	height: 46px;
-}
-
-.tg-text-muted {
-	font-size: 12px;
-	align-self: center;
-}
-
-.tg-messages-wrap {
-	flex: 1;
-	overflow: auto;
-	padding: 14px 10px 0;
-}
-
-.tg-messages {
-	display: flex;
-	flex-direction: column;
-	gap: 10px;
-}
-
-.tg-row {
-	display: flex;
-	gap: 10px;
-}
-
-.tg-row-self {
-	justify-content: flex-end;
-}
-
-.tg-bubble {
-	max-width: 78%;
-	border-radius: 16px;
-	padding: 10px 12px;
-	border: 1px solid rgba(255, 255, 255, 0.08);
-	background: rgba(255, 255, 255, 0.04);
-	flex: 1;
-}
-
-.tg-bubble-self {
-	background: rgba(142, 189, 237, 0.5);
-	border-color: rgba(142, 189, 237, 0.75);
-}
-
-.tg-bubble-meta {
-	display: flex;
-	justify-content: space-between;
-	gap: 10px;
-	margin-bottom: 6px;
-}
-
-.tg-author {
-	font-size: 12px;
-	color: rgba(229, 231, 235, 0.9);
-	font-weight: 700;
-}
-
-.tg-bubble-actions {
-	display: inline-flex;
-	gap: 10px;
-}
-
-.tg-link {
-	border: 0;
-	background: transparent;
-	color: white;
-	font-weight: 700;
-	font-size: 12px;
-	padding: 0;
-}
-
-.tg-text {
-	white-space: pre-wrap;
-	word-break: break-word;
-	font-size: 14px;
-}
-
-.tg-composer {
-	padding: 12px 16px 16px;
-	border-top: 1px solid rgba(255, 255, 255, 0.08);
-	background: rgba(255, 255, 255, 0.02);
-	display: flex;
-	gap: 10px;
-	align-items: center;
-}
-
-.tg-input-composer {
-	flex: 1;
-	height: 46px;
-}
-
-.tg-button-send {
-	height: 46px;
-	white-space: nowrap;
-}
-
-.tg-admin {
-	padding: 12px 16px;
-	display: flex;
-	flex-direction: column;
-	gap: 12px;
-	background: rgba(255, 255, 255, 0.01);
-}
-
-.tg-admin-section {
-	border: 1px solid rgba(255, 255, 255, 0.08);
-	border-radius: 14px;
-	padding: 12px;
-	background: rgba(255, 255, 255, 0.02);
-}
-
-.tg-admin-title {
-	font-weight: 800;
-	margin-bottom: 8px;
-}
-
-.tg-admin-request {
-	display: flex;
-	justify-content: space-between;
-	gap: 10px;
-	align-items: center;
-	padding: 8px 0;
-	border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
-}
-.tg-admin-request:last-child {
-	border-bottom: 0;
-}
-
-.tg-admin-actions {
-	display: inline-flex;
-	gap: 8px;
-}
-
-.tg-button-small {
-	height: 34px;
-	border-radius: 10px;
-	padding: 0 10px;
-}
-
-.tg-button-danger {
-	background: rgba(239, 68, 68, 0.15);
-	border: 1px solid rgba(239, 68, 68, 0.35);
-	color: #fca5a5;
-}
-
-.tg-qr-wrap {
-	display: flex;
-	align-items: center;
-	justify-content: flex-start;
-	padding: 6px 0;
-}
-
-.tg-qr {
-	width: 180px;
-	height: 180px;
-}
-
-/* Overlay затемнение */
-.tg-overlay {
-	position: fixed;
-	inset: 0;
-	background: rgba(0, 0, 0, 0.45);
-	z-index: 20;
-}
-
-/* Выезжающая панель */
-.tg-admin-drawer {
-	position: fixed;
-	top: 0;
-	right: 0;
-	width: 100%;
-	max-width: 420px;
-	height: 100%;
-	background: #0b1220;
-	z-index: 30;
-
-	padding: 16px;
-	overflow-y: auto;
-
-	box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
-
-	animation: slideIn 0.25s ease;
-}
-
-.tg-admin-close {
-	display: flex;
-	justify-content: end;
-}
-
-/* Анимация */
+/* Анимация для выезжающих панелей */
 @keyframes slideIn {
 	from {
 		transform: translateX(100%);

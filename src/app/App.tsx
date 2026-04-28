@@ -1,6 +1,10 @@
 import { useEffect, useState } from 'react'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import LoginPage from '../pages/login/LoginPage'
 import ChatPage from '../pages/chat/ChatPage'
+import ProfilePage from '../pages/profile/ProfilePage'
+import SettingsPage from '../pages/settings/SettingsPage'
+import Layout from '../widgets/layout/Layout'
 import { useSocket } from '../shared/lib/socket/useSocket'
 import type {
 	WsServerEvent,
@@ -13,6 +17,122 @@ type Auth = {
 	userId: string
 	isAdmin: boolean
 	name: string
+}
+
+// Компонент для защиты маршрутов
+function ProtectedRouteWrapper(props: {
+	auth: Auth
+	status: 'pending' | 'approved' | 'kicked'
+	wsStatus: 'disconnected' | 'connecting' | 'connected'
+	messages: any[]
+	pendingUsers: WsJoinRequestToAdmin[]
+	onSendMessage: (text: string, attachmentIds?: string[]) => void
+	onDeleteMessage: (messageId: string) => void
+	onApproveJoinRequest: (userId: string) => void
+	onRejectJoinRequest: (userId: string) => void
+	onKickUser: (userId: string) => void
+	onClearMessages: () => void
+	onClearUsers: () => void
+	onLogout: () => void
+}) {
+	const {
+		auth,
+		status,
+		wsStatus,
+		messages,
+		pendingUsers,
+		onSendMessage,
+		onDeleteMessage,
+		onApproveJoinRequest,
+		onRejectJoinRequest,
+		onKickUser,
+		onClearMessages,
+		onClearUsers,
+		onLogout,
+	} = props
+
+	// Если статус "pending", показываем ожидание
+	if (status === 'pending') {
+		return <div>Ожидание одобрения админа...</div>
+	}
+
+	// Если статус "kicked", перенаправляем на логин
+	if (status === 'kicked') {
+		return <Navigate to="/login" replace />
+	}
+
+	// Для одобренных пользователей показываем Layout с маршрутами
+	return (
+		<Layout
+			profile={{
+				userId: auth.userId,
+				name: auth.name,
+				isAdmin: auth.isAdmin,
+				sessionToken: auth.jwt,
+			}}
+			wsStatus={wsStatus}
+			joinRequestsCount={pendingUsers.length}
+		>
+			<Routes>
+				<Route
+					path="/chat"
+					element={
+						<ChatPage
+							profile={{
+								userId: auth.userId,
+								name: auth.name,
+								isAdmin: auth.isAdmin,
+								sessionToken: auth.jwt,
+							}}
+							joined={status === 'approved'}
+							wsStatus={wsStatus}
+							messages={messages}
+							joinRequests={pendingUsers}
+							onSendMessage={onSendMessage}
+							onDeleteMessage={onDeleteMessage}
+							onApproveJoinRequest={onApproveJoinRequest}
+							onRejectJoinRequest={onRejectJoinRequest}
+							onKickUser={onKickUser}
+						/>
+					}
+				/>
+				<Route
+					path="/profile"
+					element={
+						<ProfilePage
+							profile={{
+								userId: auth.userId,
+								name: auth.name,
+								isAdmin: auth.isAdmin,
+								sessionToken: auth.jwt,
+							}}
+						/>
+					}
+				/>
+				<Route
+					path="/settings"
+					element={
+						<SettingsPage
+							profile={{
+								userId: auth.userId,
+								name: auth.name,
+								isAdmin: auth.isAdmin,
+								sessionToken: auth.jwt,
+							}}
+							joinRequests={pendingUsers}
+							isAdmin={auth.isAdmin}
+							onApproveJoinRequest={onApproveJoinRequest}
+							onRejectJoinRequest={onRejectJoinRequest}
+							onClearMessages={onClearMessages}
+							onClearUsers={onClearUsers}
+							onLogout={onLogout}
+						/>
+					}
+				/>
+				<Route path="*" element={<Navigate to="/chat" replace />} />
+			</Routes>
+		</Layout>
+	)
 }
 
 export default function App() {
@@ -62,7 +182,7 @@ export default function App() {
 		// 📊 STATUS
 
 		if (msg.type === 'join_status') {
-			setStatus(msg.status) // <--- обязательно вернуть!
+			setStatus(msg.status)
 		}
 
 		if (msg.type === 'join_approved') {
@@ -177,64 +297,80 @@ export default function App() {
 		setPendingUsers([])
 	}
 
-	// ⛔ LOGIN PAGE
-	if (!auth) {
-		return (
-			<LoginPage
-				wsStatus={wsStatus}
-				onLogin={handleLogin}
-				onRegister={handleRegister}
-				error={authError ?? undefined}
-			/>
-		)
-	}
-
-	// ⏳ WAIT APPROVAL
-	if (status === 'pending') {
-		return <div>Ожидание одобрения админа...</div>
-	}
-
-	// ✅ CHAT PAGE
 	return (
-		<ChatPage
-			profile={{
-				userId: auth.userId,
-				name: auth.name,
-				isAdmin: auth.isAdmin,
-				sessionToken: auth.jwt,
-			}}
-			joined={status === 'approved'}
-			wsStatus={wsStatus}
-			messages={messages}
-			joinRequests={pendingUsers}
-			onLogout={handleLogout}
-			onSendMessage={(text) => {
-				send({
-					type: 'send_message',
-					messageId: crypto.randomUUID(),
-					text,
-				})
-			}}
-			onDeleteMessage={(id) => {
-				send({ type: 'delete_message', messageId: id })
-			}}
-			onApproveJoinRequest={(userId) => {
-				send({ type: 'join_approve', userId })
-				setPendingUsers((prev) => prev.filter((u) => u.userId !== userId))
-			}}
-			onRejectJoinRequest={(userId) => {
-				send({ type: 'join_reject', userId })
-				setPendingUsers((prev) => prev.filter((u) => u.userId !== userId))
-			}}
-			onKickUser={(userId) => {
-				send({ type: 'kick_user', userId })
-			}}
-			onClearMessages={() => {
-				send({ type: 'admin_clear_messages' })
-			}}
-			onClearUsers={() => {
-				send({ type: 'admin_clear_users' })
-			}}
-		/>
+		<BrowserRouter>
+			<Routes>
+				{/* Маршрут для логина */}
+				<Route
+					path="/login"
+					element={
+						!auth ? (
+							<LoginPage
+								wsStatus={wsStatus}
+								onLogin={handleLogin}
+								onRegister={handleRegister}
+								error={authError ?? undefined}
+							/>
+						) : (
+							<Navigate to="/chat" replace />
+						)
+					}
+				/>
+
+				{/* Защищённые маршруты */}
+				<Route
+					path="/*"
+					element={
+						auth ? (
+							<ProtectedRouteWrapper
+								auth={auth}
+								status={status}
+								wsStatus={wsStatus}
+								messages={messages}
+								pendingUsers={pendingUsers}
+								onSendMessage={(text, attachmentIds) => {
+									send({
+										type: 'send_message',
+										messageId: crypto.randomUUID(),
+										text,
+										attachmentIds,
+									})
+								}}
+								onDeleteMessage={(id) => {
+									send({ type: 'delete_message', messageId: id })
+								}}
+								onApproveJoinRequest={(userId) => {
+									send({ type: 'join_approve', userId })
+									setPendingUsers((prev) =>
+										prev.filter((u) => u.userId !== userId)
+									)
+								}}
+								onRejectJoinRequest={(userId) => {
+									send({ type: 'join_reject', userId })
+									setPendingUsers((prev) =>
+										prev.filter((u) => u.userId !== userId)
+									)
+								}}
+								onKickUser={(userId) => {
+									send({ type: 'kick_user', userId })
+								}}
+								onClearMessages={() => {
+									send({ type: 'admin_clear_messages' })
+								}}
+								onClearUsers={() => {
+									send({ type: 'admin_clear_users' })
+								}}
+								onLogout={handleLogout}
+							/>
+						) : (
+							<Navigate to="/login" replace />
+						)
+					}
+				/>
+
+				{/* Корневой маршрут перенаправляет на /login */}
+				<Route path="/" element={<Navigate to="/login" replace />} />
+			</Routes>
+		</BrowserRouter>
 	)
 }

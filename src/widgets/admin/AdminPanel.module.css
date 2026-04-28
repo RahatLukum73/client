@@ -1,0 +1,77 @@
+/* AdminPanel.module.css */
+
+.admin {
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.01);
+}
+
+.adminSection {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.adminTitle {
+  font-weight: 800;
+  margin-bottom: 8px;
+  font-size: 16px;
+}
+
+.adminRequest {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+}
+
+.adminRequest:last-child {
+  border-bottom: 0;
+}
+
+.adminActions {
+  display: inline-flex;
+  gap: 8px;
+}
+
+.text {
+  font-size: 14px;
+}
+
+.textMuted {
+  color: rgba(229, 231, 235, 0.75);
+  font-size: 12px;
+}
+
+.button {
+  height: 44px;
+  padding: 0 16px;
+  border-radius: 10px;
+  background: rgba(82, 136, 193, 1);
+  border: 0;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.button:hover {
+  opacity: 0.9;
+}
+
+.buttonSmall {
+  height: 34px;
+  border-radius: 10px;
+  padding: 0 10px;
+}
+
+.buttonDanger {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  color: #fca5a5;
+}
