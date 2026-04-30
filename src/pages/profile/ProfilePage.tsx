@@ -1,13 +1,14 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import type { ChatProfile } from '../../features/auth/model/profile'
 import styles from './ProfilePage.module.css'
 
 type ProfilePageProps = {
 	profile: ChatProfile
+	onProfileUpdate?: (updates: Partial<ChatProfile>) => void
 }
 
 export default function ProfilePage(props: ProfilePageProps) {
-	const { profile } = props
+	const { profile, onProfileUpdate } = props
 
 	// Состояние для редактирования имени
 	const [name, setName] = useState(profile.name)
@@ -30,12 +31,22 @@ export default function ProfilePage(props: ProfilePageProps) {
 
 	// Состояние для загрузки аватара
 	const [avatarFile, setAvatarFile] = useState<File | null>(null)
-	const [avatarPreview, setAvatarPreview] = useState<string | null>(null)
+	const [avatarPreview, setAvatarPreview] = useState<string | null>(
+		profile.avatarUrl ?? null
+	)
 	const [avatarLoading, setAvatarLoading] = useState(false)
 	const [avatarMessage, setAvatarMessage] = useState<{
 		type: 'success' | 'error'
 		text: string
 	} | null>(null)
+
+	// Синхронизация аватара при изменении профиля (например после обновления страницы)
+	useEffect(() => {
+		if (profile.avatarUrl && profile.avatarUrl !== avatarPreview) {
+			setAvatarPreview(profile.avatarUrl)
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [profile.avatarUrl, profile.userId])
 
 	// Аватар пользователя (буква или изображение)
 	const avatarLetter = profile.name.slice(0, 1).toUpperCase()
@@ -70,6 +81,7 @@ export default function ProfilePage(props: ProfilePageProps) {
 
 			setNameMessage({ type: 'success', text: 'Имя успешно обновлено' })
 			setIsEditingName(false)
+			onProfileUpdate?.({ name: name.trim() })
 		} catch (error) {
 			console.error('Failed to update name:', error)
 			setNameMessage({
@@ -197,6 +209,7 @@ export default function ProfilePage(props: ProfilePageProps) {
 			setAvatarPreview(data.url)
 			setAvatarMessage({ type: 'success', text: 'Аватар успешно обновлён' })
 			setAvatarFile(null)
+			onProfileUpdate?.({ avatarUrl: data.url })
 		} catch (error) {
 			console.error('Failed to upload avatar:', error)
 			setAvatarMessage({
@@ -211,20 +224,27 @@ export default function ProfilePage(props: ProfilePageProps) {
 		}
 	}
 
+	console.log(
+		'[ProfilePage] RENDER - avatarPreview:',
+		avatarPreview,
+		'profile.avatarUrl:',
+		profile.avatarUrl
+	)
+
 	return (
 		<div className={styles.container}>
 			<h1 className={styles.title}>Профиль</h1>
 
-			{/* Информация о профиле */}
+			{/* Загрузка аватара */}
 			<div className={styles.section}>
-				<h2 className={styles.sectionTitle}>Профиль пользователя</h2>
-				<div className={styles.profileInfo}>
+				<h2 className={styles.sectionTitle}>Аватар</h2>
+				<div className={styles.avatarUpload}>
 					<div className={styles.avatar}>
 						{avatarPreview ? (
 							<img
 								src={avatarPreview}
-								alt="Аватар"
-								className={styles.avatarImage}
+								alt="Предпросмотр"
+								className={styles.avatarPreview}
 							/>
 						) : (
 							<div className={styles.avatarPlaceholder}>
@@ -232,22 +252,52 @@ export default function ProfilePage(props: ProfilePageProps) {
 							</div>
 						)}
 					</div>
-					<div className={styles.userInfo}>
-						<div className={styles.userName}>{profile.name}</div>
-						<div className={styles.userId}>ID: {profile.userId}</div>
-						{profile.isAdmin && (
-							<div
-								style={{
-									color: '#93c5fd',
-									fontSize: '12px',
-									marginTop: '4px',
-								}}
+					<div style={{ flex: 1 }}>
+						<input
+							type="file"
+							id="avatar-upload"
+							className={styles.fileInput}
+							accept="image/*"
+							onChange={handleAvatarSelect}
+						/>
+						<label htmlFor="avatar-upload">
+							<button
+								className={`${styles.button} ${styles.uploadButton}`}
+								type="button"
+								onClick={() =>
+									document.getElementById('avatar-upload')?.click()
+								}
 							>
-								Администратор
-							</div>
-						)}
+								Выбрать файл
+							</button>
+						</label>
+						<div
+							style={{
+								fontSize: '12px',
+								color: 'rgba(229, 231, 235, 0.6)',
+								marginTop: '4px',
+							}}
+						>
+							Поддерживаются JPG, PNG, GIF, WEBP. Максимум 5MB.
+						</div>
 					</div>
+					{avatarFile && (
+						<button
+							className={styles.button}
+							onClick={handleAvatarUpload}
+							disabled={avatarLoading}
+						>
+							{avatarLoading ? 'Загрузка...' : 'Загрузить'}
+						</button>
+					)}
 				</div>
+				{avatarMessage && (
+					<div
+						className={`${styles.message} ${styles[avatarMessage.type === 'success' ? 'messageSuccess' : 'messageError']}`}
+					>
+						{avatarMessage.text}
+					</div>
+				)}
 			</div>
 
 			{/* Редактирование имени */}
@@ -369,71 +419,6 @@ export default function ProfilePage(props: ProfilePageProps) {
 						className={`${styles.message} ${styles[passwordMessage.type === 'success' ? 'messageSuccess' : 'messageError']}`}
 					>
 						{passwordMessage.text}
-					</div>
-				)}
-			</div>
-
-			{/* Загрузка аватара */}
-			<div className={styles.section}>
-				<h2 className={styles.sectionTitle}>Аватар</h2>
-				<div className={styles.avatarUpload}>
-					<div className={styles.avatar}>
-						{avatarPreview ? (
-							<img
-								src={avatarPreview}
-								alt="Предпросмотр"
-								className={styles.avatarPreview}
-							/>
-						) : (
-							<div className={styles.avatarPlaceholder}>
-								{avatarLetter}
-							</div>
-						)}
-					</div>
-					<div style={{ flex: 1 }}>
-						<input
-							type="file"
-							id="avatar-upload"
-							className={styles.fileInput}
-							accept="image/*"
-							onChange={handleAvatarSelect}
-						/>
-						<label htmlFor="avatar-upload">
-							<button
-								className={`${styles.button} ${styles.uploadButton}`}
-								type="button"
-								onClick={() =>
-									document.getElementById('avatar-upload')?.click()
-								}
-							>
-								Выбрать файл
-							</button>
-						</label>
-						<div
-							style={{
-								fontSize: '12px',
-								color: 'rgba(229, 231, 235, 0.6)',
-								marginTop: '4px',
-							}}
-						>
-							Поддерживаются JPG, PNG, GIF, WEBP. Максимум 5MB.
-						</div>
-					</div>
-					{avatarFile && (
-						<button
-							className={styles.button}
-							onClick={handleAvatarUpload}
-							disabled={avatarLoading}
-						>
-							{avatarLoading ? 'Загрузка...' : 'Загрузить'}
-						</button>
-					)}
-				</div>
-				{avatarMessage && (
-					<div
-						className={`${styles.message} ${styles[avatarMessage.type === 'success' ? 'messageSuccess' : 'messageError']}`}
-					>
-						{avatarMessage.text}
 					</div>
 				)}
 			</div>

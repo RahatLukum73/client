@@ -1,16 +1,27 @@
+import { useState } from 'react'
 import type { WsJoinRequestToAdmin } from '../../shared/api/wsProtocol'
 import type { ChatProfile } from '../../features/auth/model/profile'
+import type { ChatUser } from '../../shared/api/users'
 import AdminPanel from '../../widgets/admin/AdminPanel'
+import ConfirmModal from '../../shared/ui/ConfirmModal/ConfirmModal'
 import styles from './SettingsPage.module.css'
+
+type ConfirmAction = {
+	type: 'kick' | 'clearMessages' | 'clearUsers'
+	userId?: string
+	userName?: string
+} | null
 
 type SettingsPageProps = {
 	profile: ChatProfile
 	joinRequests: WsJoinRequestToAdmin[]
 	isAdmin: boolean
+	users: ChatUser[]
 	onApproveJoinRequest: (userId: string) => void
 	onRejectJoinRequest: (userId: string) => void
 	onClearMessages: () => void
 	onClearUsers: () => void
+	onKickUser: (userId: string) => void
 	onLogout: () => void
 }
 
@@ -19,18 +30,57 @@ export default function SettingsPage(props: SettingsPageProps) {
 		profile,
 		joinRequests,
 		isAdmin,
+		users,
 		onApproveJoinRequest,
 		onRejectJoinRequest,
 		onClearMessages,
 		onClearUsers,
+		onKickUser,
 		onLogout,
 	} = props
+
+	const [confirmAction, setConfirmAction] = useState<ConfirmAction>(null)
+
+	const openKickConfirm = (userId: string, userName: string) => {
+		setConfirmAction({ type: 'kick', userId, userName })
+	}
+
+	const openClearMessagesConfirm = () => {
+		setConfirmAction({ type: 'clearMessages' })
+	}
+
+	const openClearUsersConfirm = () => {
+		setConfirmAction({ type: 'clearUsers' })
+	}
+
+	const closeConfirm = () => {
+		setConfirmAction(null)
+	}
+
+	const handleConfirm = () => {
+		if (!confirmAction) return
+
+		switch (confirmAction.type) {
+			case 'kick':
+				if (confirmAction.userId) {
+					onKickUser(confirmAction.userId)
+				}
+				break
+			case 'clearMessages':
+				onClearMessages()
+				break
+			case 'clearUsers':
+				onClearUsers()
+				break
+		}
+		closeConfirm()
+	}
 
 	return (
 		<div className={styles.container}>
 			<h1 className={styles.title}>Настройки</h1>
 
-			{isAdmin ? (
+			{isAdmin && (
 				<>
 					<div className={styles.adminSection}>
 						<h2 className={styles.sectionTitle}>
@@ -40,13 +90,13 @@ export default function SettingsPage(props: SettingsPageProps) {
 						<div className={styles.buttonGroup}>
 							<button
 								className={`${styles.button} ${styles.buttonDanger}`}
-								onClick={onClearMessages}
+								onClick={openClearMessagesConfirm}
 							>
 								🧹 Удалить все сообщения
 							</button>
 							<button
 								className={`${styles.button} ${styles.buttonDanger}`}
-								onClick={onClearUsers}
+								onClick={openClearUsersConfirm}
 							>
 								👥 Удалить всех пользователей
 							</button>
@@ -66,60 +116,48 @@ export default function SettingsPage(props: SettingsPageProps) {
 								<p className={styles.infoText}>Нет новых заявок</p>
 							)}
 						</div>
-
-						<div className={styles.adminSection}>
-							<h2 className={styles.sectionTitle}>
-								Настройки уведомлений
-							</h2>
-							<div className={styles.settingItem}>
-								<div>
-									<div className={styles.settingLabel}>
-										Push-уведомления
+					</div>
+					<div className={styles.adminSection}>
+						<h2 className={styles.sectionSubtitle}>Пользователи</h2>
+						<div className={styles.userList}>
+							{users.map((u) => (
+								<div key={u.id} className={styles.userItem}>
+									<div className={styles.userAvatar}>
+										{u.avatarUrl ? (
+											<img src={u.avatarUrl} alt={u.name} />
+										) : (
+											u.name[0].toUpperCase()
+										)}
 									</div>
-									<div className={styles.settingDescription}>
-										Получать уведомления о новых сообщениях
+									<div className={styles.userInfo}>
+										<div className={styles.userName}>
+											{u.name}
+											{u.isAdmin && (
+												<span className={styles.adminBadge}>
+													👑
+												</span>
+											)}
+										</div>
+										<div className={styles.userStatus}>
+											{u.status === 'pending'
+												? '⏳ Ожидает'
+												: '✅ Активен'}
+										</div>
 									</div>
+												{!u.isAdmin && (
+													<button
+														className={`${styles.button} ${styles.buttonDanger} ${styles.buttonSmall}`}
+														onClick={() => openKickConfirm(u.id, u.name)}
+														disabled={u.id === profile.userId}
+													>
+														🗑
+													</button>
+												)}
 								</div>
-								<label className={styles.toggleSwitch}>
-									<input
-										type="checkbox"
-										className={styles.toggleInput}
-										defaultChecked
-									/>
-									<span className={styles.toggleSlider}></span>
-								</label>
-							</div>
-							<div className={styles.settingItem}>
-								<div>
-									<div className={styles.settingLabel}>
-										Звуковые уведомления
-									</div>
-									<div className={styles.settingDescription}>
-										Воспроизводить звук при новом сообщении
-									</div>
-								</div>
-								<label className={styles.toggleSwitch}>
-									<input
-										type="checkbox"
-										className={styles.toggleInput}
-										defaultChecked
-									/>
-									<span className={styles.toggleSlider}></span>
-								</label>
-							</div>
+							))}
 						</div>
 					</div>
 				</>
-			) : (
-				<div className={styles.adminSection}>
-					<p className={styles.infoText}>
-						Настройки доступны только администраторам.
-					</p>
-					<p className={styles.infoText}>
-						Обычным пользователям доступны только базовые настройки
-						профиля.
-					</p>
-				</div>
 			)}
 
 			<div className={`${styles.adminSection} ${styles.accountSection}`}>
@@ -131,6 +169,33 @@ export default function SettingsPage(props: SettingsPageProps) {
 					Выйти из аккаунта
 				</button>
 			</div>
+			<ConfirmModal
+				isOpen={confirmAction !== null}
+				title={
+					confirmAction?.type === 'kick'
+						? 'Удалить пользователя'
+						: confirmAction?.type === 'clearMessages'
+						? 'Удалить все сообщения'
+						: confirmAction?.type === 'clearUsers'
+						? 'Удалить всех пользователей'
+						: ''
+				}
+				message={
+					confirmAction?.type === 'kick'
+						? `Вы уверены, что хотите удалить пользователя "${confirmAction.userName}"? Это действие нельзя отменить.`
+						: confirmAction?.type === 'clearMessages'
+						? 'Вы уверены, что хотите удалить ВСЕ сообщения? Это действие нельзя отменить.'
+						: confirmAction?.type === 'clearUsers'
+						? 'Вы уверены, что хотите удалить ВСЕХ пользователей? Это действие нельзя отменить.'
+						: ''
+				}
+				confirmText={
+					confirmAction?.type === 'kick' ? 'Удалить' : 'Подтвердить'
+				}
+				confirmVariant="danger"
+				onConfirm={handleConfirm}
+				onCancel={closeConfirm}
+			/>
 		</div>
 	)
 }

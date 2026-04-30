@@ -45,7 +45,15 @@ export default function Header(props: HeaderProps) {
 		<div className={styles.header}>
 			<div className={styles.headerLeft}>
 				<div className={styles.avatar}>
-					{profile.name.slice(0, 1).toUpperCase()}
+					{profile.avatarUrl ? (
+						<img
+							src={profile.avatarUrl}
+							alt={profile.name}
+							className={styles.avatarImage}
+						/>
+					) : (
+						profile.name.slice(0, 1).toUpperCase()
+					)}
 				</div>
 				<div className={styles.userInfo}>
 					<div className={styles.userName}>{profile.name}</div>

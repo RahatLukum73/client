@@ -82,6 +82,13 @@
 	color: #ddd6fe;
 	font-weight: 800;
 	font-size: 18px;
+	overflow: hidden;
+}
+
+.avatarImage {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
 }
 
 .userInfo {
@@ -106,7 +113,6 @@
 	width: fit-content;
 	color: #93c5fd;
 }
-
 
 .status {
 	font-size: 12px;

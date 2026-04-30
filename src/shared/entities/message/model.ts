@@ -2,6 +2,7 @@ export type ChatAuthor = {
 	id: string
 	name: string
 	isAdmin?: boolean
+	avatarUrl?: string
 }
 
 export type ChatAttachment = {

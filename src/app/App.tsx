@@ -5,6 +5,7 @@ import ChatPage from '../pages/chat/ChatPage'
 import ProfilePage from '../pages/profile/ProfilePage'
 import SettingsPage from '../pages/settings/SettingsPage'
 import Layout from '../widgets/layout/Layout'
+import { fetchUsers, type ChatUser } from '../shared/api/users'
 import { useSocket } from '../shared/lib/socket/useSocket'
 import type {
 	WsServerEvent,
@@ -17,6 +18,7 @@ type Auth = {
 	userId: string
 	isAdmin: boolean
 	name: string
+	avatarUrl?: string
 }
 
 // Компонент для защиты маршрутов
@@ -25,6 +27,7 @@ function ProtectedRouteWrapper(props: {
 	status: 'pending' | 'approved' | 'kicked'
 	wsStatus: 'disconnected' | 'connecting' | 'connected'
 	messages: any[]
+	users: ChatUser[]
 	pendingUsers: WsJoinRequestToAdmin[]
 	onSendMessage: (text: string, attachmentIds?: string[]) => void
 	onDeleteMessage: (messageId: string) => void
@@ -34,12 +37,14 @@ function ProtectedRouteWrapper(props: {
 	onClearMessages: () => void
 	onClearUsers: () => void
 	onLogout: () => void
+	onProfileUpdate: (updates: Partial<Auth>) => void
 }) {
 	const {
 		auth,
 		status,
 		wsStatus,
 		messages,
+		users,
 		pendingUsers,
 		onSendMessage,
 		onDeleteMessage,
@@ -49,6 +54,7 @@ function ProtectedRouteWrapper(props: {
 		onClearMessages,
 		onClearUsers,
 		onLogout,
+		onProfileUpdate,
 	} = props
 
 	// Если статус "pending", показываем ожидание
@@ -69,6 +75,7 @@ function ProtectedRouteWrapper(props: {
 				name: auth.name,
 				isAdmin: auth.isAdmin,
 				sessionToken: auth.jwt,
+				avatarUrl: auth.avatarUrl,
 			}}
 			wsStatus={wsStatus}
 			joinRequestsCount={pendingUsers.length}
@@ -83,6 +90,7 @@ function ProtectedRouteWrapper(props: {
 								name: auth.name,
 								isAdmin: auth.isAdmin,
 								sessionToken: auth.jwt,
+								avatarUrl: auth.avatarUrl,
 							}}
 							joined={status === 'approved'}
 							wsStatus={wsStatus}
@@ -92,7 +100,6 @@ function ProtectedRouteWrapper(props: {
 							onDeleteMessage={onDeleteMessage}
 							onApproveJoinRequest={onApproveJoinRequest}
 							onRejectJoinRequest={onRejectJoinRequest}
-							onKickUser={onKickUser}
 						/>
 					}
 				/>
@@ -105,7 +112,9 @@ function ProtectedRouteWrapper(props: {
 								name: auth.name,
 								isAdmin: auth.isAdmin,
 								sessionToken: auth.jwt,
+								avatarUrl: auth.avatarUrl,
 							}}
+							onProfileUpdate={onProfileUpdate}
 						/>
 					}
 				/>
@@ -118,7 +127,10 @@ function ProtectedRouteWrapper(props: {
 								name: auth.name,
 								isAdmin: auth.isAdmin,
 								sessionToken: auth.jwt,
+								avatarUrl: auth.avatarUrl,
 							}}
+							users={users}
+							onKickUser={onKickUser}
 							joinRequests={pendingUsers}
 							isAdmin={auth.isAdmin}
 							onApproveJoinRequest={onApproveJoinRequest}
@@ -144,6 +156,7 @@ export default function App() {
 
 	const [messages, setMessages] = useState<any[]>([])
 	const [pendingUsers, setPendingUsers] = useState<WsJoinRequestToAdmin[]>([])
+	const [users, setUsers] = useState<ChatUser[]>([])
 
 	const {
 		status: wsStatus,
@@ -160,6 +173,7 @@ export default function App() {
 				userId: msg.userId,
 				isAdmin: msg.isAdmin,
 				name: msg.name.trim(),
+				avatarUrl: msg.avatarUrl,
 			})
 		}
 		if (msg.type === 'auth_error') {
@@ -176,6 +190,7 @@ export default function App() {
 				userId: msg.userId,
 				isAdmin: msg.isAdmin,
 				name: msg.name.trim(),
+				avatarUrl: msg.avatarUrl,
 			})
 		}
 
@@ -263,11 +278,14 @@ export default function App() {
 		send({ type: 'resume', token: jwt })
 	}, [wsStatus])
 
+useEffect(() => {
+	if (!auth?.jwt) return
+	fetchUsers(auth.jwt).then(setUsers).catch(() => {})
+}, [auth])
+
 	useEffect(() => {
-		console.log('[App] auth changed, jwt present:', !!auth?.jwt)
 		if (!auth?.jwt) return
 
-		console.log('[App] Calling subscribeForPush')
 		subscribeForPush(auth.jwt)
 	}, [auth])
 
@@ -327,6 +345,7 @@ export default function App() {
 								status={status}
 								wsStatus={wsStatus}
 								messages={messages}
+								users={users}
 								pendingUsers={pendingUsers}
 								onSendMessage={(text, attachmentIds) => {
 									send({
@@ -353,14 +372,21 @@ export default function App() {
 								}}
 								onKickUser={(userId) => {
 									send({ type: 'kick_user', userId })
+									setUsers((prev) => prev.filter((u) => u.id !== userId))
 								}}
 								onClearMessages={() => {
 									send({ type: 'admin_clear_messages' })
 								}}
+								
 								onClearUsers={() => {
 									send({ type: 'admin_clear_users' })
 								}}
 								onLogout={handleLogout}
+								onProfileUpdate={(updates) => {
+									setAuth((prev) =>
+										prev ? { ...prev, ...updates } : prev
+									)
+								}}
 							/>
 						) : (
 							<Navigate to="/login" replace />

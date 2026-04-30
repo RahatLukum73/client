@@ -103,9 +103,8 @@ export default function MessageList(props: {
 	messages: ChatMessage[]
 	isAdmin: boolean
 	onDeleteMessage: (messageId: string) => void
-	onKickUser: (userId: string) => void
 }) {
-	const { profile, messages, isAdmin, onDeleteMessage, onKickUser } = props
+	const { profile, messages, isAdmin, onDeleteMessage } = props
 	const [selectedImage, setSelectedImage] = useState<string | null>(null)
 
 	const groupedMessages = groupMessagesByDate(messages)
@@ -129,7 +128,6 @@ export default function MessageList(props: {
 							const avatarLetter = (
 								m.author.name?.[0] ?? '?'
 							).toUpperCase()
-							const showKick = isAdmin && m.author.id !== profile.userId
 
 							return (
 								<div
@@ -142,7 +140,15 @@ export default function MessageList(props: {
 								>
 									{!isSelf ? (
 										<div className={styles.avatar} aria-hidden="true">
-											{avatarLetter}
+											{m.author.avatarUrl ? (
+												<img
+													src={m.author.avatarUrl}
+													alt={m.author.name}
+													className={styles.avatarImage}
+												/>
+											) : (
+												avatarLetter
+											)}
 										</div>
 									) : null}
 
@@ -164,17 +170,6 @@ export default function MessageList(props: {
 											</div>
 											{isAdmin ? (
 												<div className={styles.bubbleActions}>
-													{showKick ? (
-														<button
-															className={styles.link}
-															onClick={() =>
-																onKickUser(m.author.id)
-															}
-															type="button"
-														>
-															Кик
-														</button>
-													) : null}
 													{m.author.id ? (
 														<button
 															className={styles.link}
@@ -189,9 +184,11 @@ export default function MessageList(props: {
 												</div>
 											) : null}
 										</div>
-										<div className={styles.text}>
-											<LinkifiedText text={m.text} />
-										</div>
+										{m.text && (
+											<div className={styles.text}>
+												<LinkifiedText text={m.text} />
+											</div>
+										)}
 										{m.attachments && m.attachments.length > 0 && (
 											<div className={styles.attachmentsContainer}>
 												{m.attachments.map((attachment) => (
@@ -230,7 +227,15 @@ export default function MessageList(props: {
 
 									{isSelf ? (
 										<div className={styles.avatar} aria-hidden="true">
-											{avatarLetter}
+											{profile.avatarUrl ? (
+												<img
+													src={profile.avatarUrl}
+													alt={profile.name}
+													className={styles.avatarImage}
+												/>
+											) : (
+												avatarLetter
+											)}
 										</div>
 									) : null}
 								</div>

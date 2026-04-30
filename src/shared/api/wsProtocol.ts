@@ -78,10 +78,16 @@ export type WsAttachment = {
 
 export type WsHistoryItem = {
 	id: string
-	author: { id: string; name: string; isAdmin?: boolean }
+	author: { id: string; name: string; isAdmin?: boolean; avatarUrl?: string }
 	text: string
 	timestamp: string
-	attachments?: WsAttachment[]
+	attachments?: Array<{
+		id: string
+		url: string
+		filename: string
+		mimeType: string
+		size: number
+	}>
 }
 
 // 🔐 AUTH
@@ -91,6 +97,7 @@ export type WsRegisterSuccess = {
 	userId: string
 	isAdmin: boolean
 	name: string
+	avatarUrl?: string
 }
 
 export type WsLoginSuccess = {
@@ -99,6 +106,7 @@ export type WsLoginSuccess = {
 	userId: string
 	isAdmin: boolean
 	name: string
+	avatarUrl?: string
 }
 
 export type WsAuthError = {

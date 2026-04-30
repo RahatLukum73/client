@@ -18,7 +18,6 @@ export default function ChatPage(props: {
 	onDeleteMessage: (messageId: string) => void
 	onApproveJoinRequest: (userId: string) => void
 	onRejectJoinRequest: (userId: string) => void
-	onKickUser: (userId: string) => void
 }) {
 	const {
 		profile,
@@ -30,7 +29,6 @@ export default function ChatPage(props: {
 		onDeleteMessage,
 		onApproveJoinRequest,
 		onRejectJoinRequest,
-		onKickUser,
 	} = props
 
 	const scrollRef = useRef<HTMLDivElement | null>(null)
@@ -54,7 +52,6 @@ export default function ChatPage(props: {
 					messages={messages}
 					isAdmin={profile.isAdmin}
 					onDeleteMessage={onDeleteMessage}
-					onKickUser={onKickUser}
 				/>
 			</div>
 
