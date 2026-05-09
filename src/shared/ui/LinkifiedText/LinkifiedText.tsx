@@ -4,13 +4,6 @@ import type { ReactNode } from 'react'
 // Поддерживает: http://, https://, www.
 const URL_REGEX = /(https?:\/\/[^\s<>]+|www\.[^\s<>]+\.[^\s<>]+)/gi
 
-// Функция для экранирования HTML-сущностей
-function escapeHtml(text: string): string {
-	const div = document.createElement('div')
-	div.textContent = text
-	return div.innerHTML
-}
-
 type LinkifiedTextProps = {
 	text: string
 }
