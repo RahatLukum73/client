@@ -22,13 +22,9 @@ export default function ChatPage(props: {
 	const {
 		profile,
 		joined,
-		wsStatus,
 		messages,
-		joinRequests,
 		onSendMessage,
 		onDeleteMessage,
-		onApproveJoinRequest,
-		onRejectJoinRequest,
 	} = props
 
 	const scrollRef = useRef<HTMLDivElement | null>(null)
@@ -54,7 +50,6 @@ export default function ChatPage(props: {
 					onDeleteMessage={onDeleteMessage}
 				/>
 			</div>
-
 			<MessageComposer
 				onSendMessage={handleSend}
 				disabled={!joined}

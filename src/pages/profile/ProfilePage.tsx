@@ -20,6 +20,7 @@ export default function ProfilePage(props: ProfilePageProps) {
 	} | null>(null)
 
 	// Состояние для смены пароля
+	const [isEditingPassword, setIsEditingPassword] = useState(false)
 	const [oldPassword, setOldPassword] = useState('')
 	const [newPassword, setNewPassword] = useState('')
 	const [confirmPassword, setConfirmPassword] = useState('')
@@ -76,7 +77,9 @@ export default function ProfilePage(props: ProfilePageProps) {
 
 			if (!response.ok) {
 				const error = await response.json()
-				throw new Error(error.message || 'Ошибка при обновлении имени')
+				throw new Error(
+					error.message || error.error || 'Ошибка при обновлении имени'
+				)
 			}
 
 			setNameMessage({ type: 'success', text: 'Имя успешно обновлено' })
@@ -224,13 +227,6 @@ export default function ProfilePage(props: ProfilePageProps) {
 		}
 	}
 
-	console.log(
-		'[ProfilePage] RENDER - avatarPreview:',
-		avatarPreview,
-		'profile.avatarUrl:',
-		profile.avatarUrl
-	)
-
 	return (
 		<div className={styles.container}>
 			<h1 className={styles.title}>Профиль</h1>
@@ -370,50 +366,94 @@ export default function ProfilePage(props: ProfilePageProps) {
 			{/* Смена пароля */}
 			<div className={styles.section}>
 				<h2 className={styles.sectionTitle}>Смена пароля</h2>
-				<form onSubmit={handlePasswordSubmit} className={styles.form}>
-					<div className={styles.formGroup}>
-						<label className={styles.label}>Старый пароль</label>
-						<input
-							className={styles.input}
-							type="password"
-							value={oldPassword}
-							onChange={(e) => setOldPassword(e.target.value)}
-							placeholder="Введите старый пароль"
-						/>
-					</div>
-					<div className={styles.formGroup}>
-						<label className={styles.label}>Новый пароль</label>
-						<input
-							className={styles.input}
-							type="password"
-							value={newPassword}
-							onChange={(e) => setNewPassword(e.target.value)}
-							placeholder="Введите новый пароль (мин. 6 символов)"
-						/>
-					</div>
-					<div className={styles.formGroup}>
-						<label className={styles.label}>Подтверждение пароля</label>
-						<input
-							className={styles.input}
-							type="password"
-							value={confirmPassword}
-							onChange={(e) => setConfirmPassword(e.target.value)}
-							placeholder="Повторите новый пароль"
-						/>
-					</div>
-					<button
-						className={styles.button}
-						type="submit"
-						disabled={
-							passwordLoading ||
-							!oldPassword ||
-							!newPassword ||
-							!confirmPassword
-						}
+				{isEditingPassword ? (
+					<form onSubmit={handlePasswordSubmit} className={styles.form}>
+						<div className={styles.formGroup}>
+							<label className={styles.label}>Старый пароль</label>
+							<input
+								className={styles.input}
+								type="password"
+								value={oldPassword}
+								onChange={(e) => setOldPassword(e.target.value)}
+								placeholder="Введите старый пароль"
+								autoFocus
+							/>
+						</div>
+						<div className={styles.formGroup}>
+							<label className={styles.label}>Новый пароль</label>
+							<input
+								className={styles.input}
+								type="password"
+								value={newPassword}
+								onChange={(e) => setNewPassword(e.target.value)}
+								placeholder="Введите новый пароль (мин. 6 символов)"
+							/>
+						</div>
+						<div className={styles.formGroup}>
+							<label className={styles.label}>
+								Подтверждение пароля
+							</label>
+							<input
+								className={styles.input}
+								type="password"
+								value={confirmPassword}
+								onChange={(e) => setConfirmPassword(e.target.value)}
+								placeholder="Повторите новый пароль"
+							/>
+						</div>
+						<div style={{ display: 'flex', gap: '8px' }}>
+							<button
+								className={styles.button}
+								type="submit"
+								disabled={
+									passwordLoading ||
+									!oldPassword ||
+									!newPassword ||
+									!confirmPassword
+								}
+							>
+								{passwordLoading ? 'Смена пароля...' : 'Сменить пароль'}
+							</button>
+							<button
+								className={`${styles.button} ${styles.buttonDanger}`}
+								type="button"
+								onClick={() => {
+									setOldPassword('')
+									setNewPassword('')
+									setConfirmPassword('')
+									setIsEditingPassword(false)
+									setPasswordMessage(null)
+								}}
+								disabled={passwordLoading}
+							>
+								Отмена
+							</button>
+						</div>
+					</form>
+				) : (
+					<div
+						style={{ display: 'flex', alignItems: 'center', gap: '12px' }}
 					>
-						{passwordLoading ? 'Смена пароля...' : 'Сменить пароль'}
-					</button>
-				</form>
+						<div style={{ flex: 1 }}>
+							<div className={styles.label}>Текущий пароль</div>
+							<div
+								style={{
+									fontSize: '16px',
+									marginTop: '4px',
+									letterSpacing: '2px',
+								}}
+							>
+								••••••
+							</div>
+						</div>
+						<button
+							className={styles.button}
+							onClick={() => setIsEditingPassword(true)}
+						>
+							Изменить
+						</button>
+					</div>
+				)}
 				{passwordMessage && (
 					<div
 						className={`${styles.message} ${styles[passwordMessage.type === 'success' ? 'messageSuccess' : 'messageError']}`}

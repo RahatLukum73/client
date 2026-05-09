@@ -24,9 +24,12 @@ export default function MessageComposer(props: MessageComposerProps) {
 	const [text, setText] = useState('')
 	const [attachments, setAttachments] = useState<Attachment[]>([])
 	const fileInputRef = useRef<HTMLInputElement>(null)
+	const textInputRef = useRef<HTMLTextAreaElement>(null)
 
-	const handleTextChange = (e: ChangeEvent<HTMLInputElement>) => {
+	const handleTextChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
 		setText(e.target.value)
+		e.target.style.height = 'auto'
+		e.target.style.height = `${Math.min(e.target.scrollHeight, 150)}px`
 	}
 
 	const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -51,14 +54,38 @@ export default function MessageComposer(props: MessageComposerProps) {
 
 		for (const file of newFiles) {
 			// Проверка типа файла (только изображения)
-			if (!file.type.startsWith('image/')) {
-				alert('Можно загружать только изображения')
+			const allowedTypes = [
+				'image/',
+				'application/pdf',
+				'application/msword',
+				'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+				'application/vnd.ms-excel',
+				'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+				'application/vnd.ms-powerpoint',
+				'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+				'text/plain',
+				'application/zip',
+				'application/x-zip-compressed',
+				'audio/mpeg',
+				'audio/mp3',
+				'audio/aac',
+				'audio/ogg',
+				'audio/x-m4a',
+				'audio/mp4',
+			]
+
+			const isAllowed = allowedTypes.some(
+				(type) => file.type === type || file.type.startsWith(type)
+			)
+
+			if (!isAllowed) {
+				alert('Недопустимый тип файла')
 				continue
 			}
 
 			// Проверка размера (5MB)
-			if (file.size > 5 * 1024 * 1024) {
-				alert(`Файл ${file.name} слишком большой. Максимум 5MB`)
+			if (file.size > 10 * 1024 * 1024) {
+				alert(`Файл ${file.name} слишком большой. Максимум 10MB`)
 				continue
 			}
 
@@ -179,6 +206,9 @@ export default function MessageComposer(props: MessageComposerProps) {
 
 		// Очищаем состояние
 		setText('')
+		if (textInputRef.current) {
+			textInputRef.current.style.height = 'auto'
+		}
 		attachments.forEach((a) => URL.revokeObjectURL(a.previewUrl))
 		setAttachments([])
 	}
@@ -190,15 +220,6 @@ export default function MessageComposer(props: MessageComposerProps) {
 		<div className={styles.composerWrapper}>
 			<div className={styles.composer}>
 				<div className={styles.inputContainer}>
-					<input
-						className={styles.inputComposer}
-						value={text}
-						onChange={handleTextChange}
-						onKeyDown={handleKeyDown}
-						placeholder={placeholder}
-						disabled={disabled}
-					/>
-
 					{attachments.length > 0 && (
 						<div className={styles.previewContainer}>
 							{attachments.map((attachment) => (
@@ -257,34 +278,56 @@ export default function MessageComposer(props: MessageComposerProps) {
 							))}
 						</div>
 					)}
-				</div>
+					<div className={styles.inputWrapper}>
+						<textarea
+							ref={textInputRef}
+							className={styles.inputComposer}
+							value={text}
+							onChange={handleTextChange}
+							onKeyDown={handleKeyDown}
+							placeholder={placeholder}
+							disabled={disabled}
+							rows={1}
+						/>
 
-				<div className={styles.actions}>
-					<button
-						className={styles.attachButton}
-						onClick={handleAttachClick}
-						disabled={disabled || attachments.length >= 5}
-						type="button"
-						title="Прикрепить файл"
-					>
-						📎
-					</button>
+						<button
+							className={styles.attachButton}
+							onClick={handleAttachClick}
+							disabled={disabled || attachments.length >= 5}
+							type="button"
+							title="Прикрепить файл"
+						>
+							<svg
+								width="20"
+								height="20"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								strokeWidth="2"
+								strokeLinecap="round"
+								strokeLinejoin="round"
+							>
+								<path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48" />
+							</svg>
+						</button>
 
-					<button
-						className={styles.buttonSend}
-						disabled={!canSend}
-						onClick={handleSend}
-						type="button"
-					>
-						Отправить
-					</button>
+						<button
+							className={styles.buttonSend}
+							disabled={!canSend}
+							onClick={handleSend}
+							type="button"
+							title="Отправить"
+						>
+							➤
+						</button>
+					</div>
 				</div>
 
 				<input
 					ref={fileInputRef}
 					type="file"
 					className={styles.fileInput}
-					accept="image/*"
+					accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.zip,.mp3,.aac,.ogg,.m4a"
 					multiple
 					onChange={handleFileSelect}
 				/>

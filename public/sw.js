@@ -108,6 +108,7 @@ self.addEventListener('push', (event) => {
 				body: summaryBody,
 				data: { count },
 				icon: '/favicon.png',
+				badge: '/badge-icon.png',
 				tag: 'chat-summary',
 				renotify: true,
 			}

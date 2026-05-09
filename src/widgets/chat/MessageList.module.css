@@ -4,26 +4,30 @@
 	display: flex;
 	flex-direction: column;
 	flex: 1;
+	padding: 0 12px 24px 12px;
+	overflow-x: hidden;
+	box-sizing: border-box;
+	width: 100%;
 }
 
 .dateSeparator {
 	display: flex;
 	align-items: center;
+	justify-content: center;
 	gap: 12px;
-	margin: 16px 0 12px;
-	color: rgba(229, 231, 235, 0.6);
+	margin: 16px 0 16px 0;
+	color: rgb(231, 230, 218);
 	font-size: 12px;
 	font-weight: 600;
 	text-transform: uppercase;
 	letter-spacing: 0.5px;
 }
 
-.dateSeparator::before,
-.dateSeparator::after {
-	content: '';
-	flex: 1;
-	height: 1px;
-	background: rgba(255, 255, 255, 0.15);
+.dataSeparatorStyle {
+	background: rgba(25, 32, 53, 1);
+	line-height: 100%;
+	padding: 6px;
+	border-radius: 8px;
 }
 
 /* Контейнер для группы сообщений одного дня */
@@ -36,6 +40,11 @@
 .row {
 	display: flex;
 	gap: 10px;
+	align-items: start;
+	max-width: 100%;
+	overflow-x: hidden;
+	box-sizing: border-box;
+	width: 100%;
 }
 
 .rowSelf {
@@ -48,7 +57,7 @@
 	border-radius: 999px;
 	display: flex;
 	align-items: center;
-	align-self: center;
+	align-self: flex-end;
 	justify-content: center;
 	background: rgba(76, 121, 168, 1);
 	border: 1px solid rgba(142, 189, 237, 0.5);
@@ -66,17 +75,19 @@
 }
 
 .bubble {
-	max-width: 78%;
+	max-width: 100%;
 	border-radius: 16px;
-	padding: 10px 12px;
-	border: 1px solid rgba(255, 255, 255, 0.08);
-	background: rgba(255, 255, 255, 0.04);
-	flex: 1;
+	padding: 4px 8px 8px 8px;
+	background: rgba(25, 32, 53, 1);
+	box-sizing: border-box;
+	flex: 0 1 auto;
 }
 
 .bubbleSelf {
-	background: rgba(142, 189, 237, 0.5);
+	background: rgba(76, 121, 168, 1);
 	border-color: rgba(142, 189, 237, 0.75);
+	box-sizing: border-box;
+	flex: 0 1 auto;
 }
 
 .bubbleMeta {
@@ -89,13 +100,12 @@
 
 .author {
 	font-size: 12px;
-	color: rgba(229, 231, 235, 0.9);
 	font-weight: 700;
 }
 
 .timestamp {
 	font-size: 11px;
-	color: rgba(229, 231, 235, 0.6);
+	color: rgba(229, 231, 235, 0.8);
 	margin-left: 8px;
 	white-space: nowrap;
 }
@@ -124,9 +134,8 @@
 .text {
 	white-space: pre-wrap;
 	word-break: break-word;
-	font-size: 14px;
-	line-height: 1.4;
-	margin-bottom: 8px;
+	font-size: 16px;
+	line-height: 1.2;
 }
 
 .attachmentsContainer {
@@ -137,7 +146,7 @@
 }
 
 .attachment {
-	max-width: 200px;
+	max-width: 100%;
 	border-radius: 8px;
 	overflow: hidden;
 	border: 1px solid rgba(255, 255, 255, 0.1);
@@ -145,14 +154,25 @@
 	transition: transform 0.2s;
 }
 
-.attachment:hover {
-	transform: scale(1.02);
+.attachment:first-child {
+	border-top-left-radius: 8px;
+	border-bottom-left-radius: 8px;
+}
+
+.attachment:last-child {
+	border-top-right-radius: 8px;
+	border-bottom-right-radius: 8px;
+}
+
+.attachment:only-child {
+	border-radius: 8px;
 }
 
 .attachmentImage {
 	width: 100%;
 	height: auto;
 	display: block;
+	object-fit: cover;
 }
 
 .attachmentInfo {
@@ -161,6 +181,24 @@
 	font-size: 11px;
 	color: rgba(255, 255, 255, 0.7);
 	text-align: center;
+}
+
+.attachmentFile:hover {
+	background: rgba(255, 255, 255, 0.12);
+}
+
+.attachmentFile {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 10px 14px;
+	background: rgba(255, 255, 255, 0.08);
+	border-radius: 8px;
+	text-decoration: none;
+	color: inherit;
+	width: 100%;
+	box-sizing: border-box;
+	max-width: 100%;
 }
 
 .modalOverlay {
@@ -184,9 +222,11 @@
 }
 
 .modalImage {
+	width: 100%;
 	max-width: 100%;
 	max-height: 80vh;
 	object-fit: contain;
+	box-sizing: border-box;
 }
 
 .modalClose {
@@ -208,4 +248,68 @@
 
 .modalClose:hover {
 	background: rgba(255, 255, 255, 0.3);
+}
+
+.bubbleLongPress {
+	user-select: none;
+	-webkit-user-select: none;
+	touch-action: manipulation;
+	cursor: pointer;
+	position: relative;
+}
+
+.bubbleLongPress:active {
+	transform: scale(0.98);
+	transition: transform 0.1s;
+}
+
+/* Опционально: визуальная индикация долгого нажатия */
+.bubbleLongPress::after {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: rgba(255, 255, 255, 0.1);
+	border-radius: inherit;
+	opacity: 0;
+	transition: opacity 0.3s;
+	pointer-events: none;
+}
+
+.bubbleLongPress:active::after {
+	opacity: 1;
+}
+
+.bubbleImageOnly {
+	background: transparent;
+	border: none;
+	padding: 0;
+	border-radius: 0;
+	min-width: auto;
+}
+
+
+.fileIcon {
+	font-size: 24px;
+}
+
+.fileInfo {
+	flex: 1;
+	min-width: 0;
+}
+
+.fileName {
+	font-size: 13px;
+	font-weight: 500;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.fileSize {
+	font-size: 11px;
+	color: rgba(229, 231, 235, 0.6);
+	margin-top: 2px;
 }

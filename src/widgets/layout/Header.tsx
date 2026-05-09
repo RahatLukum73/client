@@ -1,4 +1,4 @@
-import { NavLink, useLocation } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 import type { ChatProfile } from '../../features/auth/model/profile'
 import styles from './Header.module.css'
 
@@ -33,7 +33,6 @@ const SettingsIcon = ({ hasNotifications }: { hasNotifications: boolean }) => (
 
 export default function Header(props: HeaderProps) {
 	const { profile, wsStatus, joinRequestsCount, isAdmin } = props
-	const location = useLocation()
 
 	const getStatusClass = () => {
 		if (wsStatus === 'connected') return styles.online
@@ -57,10 +56,12 @@ export default function Header(props: HeaderProps) {
 				</div>
 				<div className={styles.userInfo}>
 					<div className={styles.userName}>{profile.name}</div>
-					<div className={styles.admirRow}>
-						<div className={styles.isAdmin}>
-							{isAdmin && <span className={styles.badge}>admin</span>}
-						</div>
+					<div className={styles.adminRow}>
+						{isAdmin && (
+							<div className={styles.isAdmin}>
+								<span className={styles.badge}>admin</span>
+							</div>
+						)}
 						<div className={`${styles.status} ${getStatusClass()}`}>
 							{wsStatus === 'connected'
 								? 'online'
@@ -107,10 +108,7 @@ export default function Header(props: HeaderProps) {
 						<span className={styles.icon}>
 							<SettingsIcon hasNotifications={joinRequestsCount > 0} />
 						</span>
-						<span className={styles.label}>
-							Настройки
-							{joinRequestsCount > 0 && ` (${joinRequestsCount})`}
-						</span>
+						<span className={styles.label}>Настройки</span>
 					</NavLink>
 				</nav>
 			</div>

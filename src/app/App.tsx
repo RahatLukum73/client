@@ -153,6 +153,9 @@ export default function App() {
 		'pending'
 	)
 	const [authError, setAuthError] = useState<string | null>(null)
+	const [isRestoring, setIsRestoring] = useState(
+		() => !!localStorage.getItem('jwt')
+	)
 
 	const [messages, setMessages] = useState<any[]>([])
 	const [pendingUsers, setPendingUsers] = useState<WsJoinRequestToAdmin[]>([])
@@ -166,6 +169,8 @@ export default function App() {
 	} = useSocket(import.meta.env.VITE_WS_URL, (msg: WsServerEvent) => {
 		// 🔐 AUTH
 		if (msg.type === 'login_success' || msg.type === 'register_success') {
+			setIsRestoring(false)
+			setAuthError(null)
 			localStorage.setItem('jwt', msg.jwt)
 
 			setAuth({
@@ -177,21 +182,8 @@ export default function App() {
 			})
 		}
 		if (msg.type === 'auth_error') {
+			setIsRestoring(false)
 			setAuthError(msg.message)
-		}
-
-		if (msg.type === 'login_success' || msg.type === 'register_success') {
-			setAuthError(null) // ✅ сброс ошибки
-
-			localStorage.setItem('jwt', msg.jwt)
-
-			setAuth({
-				jwt: msg.jwt,
-				userId: msg.userId,
-				isAdmin: msg.isAdmin,
-				name: msg.name.trim(),
-				avatarUrl: msg.avatarUrl,
-			})
 		}
 
 		// 📊 STATUS
@@ -209,6 +201,7 @@ export default function App() {
 		}
 
 		if (msg.type === 'join_rejected') {
+			setIsRestoring(false)
 			setAuth(null)
 			setStatus('pending')
 			localStorage.removeItem('jwt')
@@ -227,6 +220,7 @@ export default function App() {
 					},
 				]
 			})
+			reloadUsers()
 		}
 
 		// 💬 CHAT
@@ -266,7 +260,22 @@ export default function App() {
 	// 🔌 connect on mount
 	useEffect(() => {
 		connect()
+		const jwt = localStorage.getItem('jwt')
+		if (jwt) {
+			setIsRestoring(true)
+		}
 	}, [])
+
+	// ⏱ Таймаут восстановления сессии
+	useEffect(() => {
+		if (!isRestoring) return
+
+		const timer = setTimeout(() => {
+			setIsRestoring(false)
+		}, 5000)
+
+		return () => clearTimeout(timer)
+	}, [isRestoring])
 
 	// 🔁 auto resume
 	useEffect(() => {
@@ -278,16 +287,26 @@ export default function App() {
 		send({ type: 'resume', token: jwt })
 	}, [wsStatus])
 
-useEffect(() => {
-	if (!auth?.jwt) return
-	fetchUsers(auth.jwt).then(setUsers).catch(() => {})
-}, [auth])
+	useEffect(() => {
+		if (!auth?.jwt) return
+		fetchUsers(auth.jwt)
+			.then(setUsers)
+			.catch(() => {})
+	}, [auth])
 
 	useEffect(() => {
 		if (!auth?.jwt) return
 
 		subscribeForPush(auth.jwt)
 	}, [auth])
+
+	const reloadUsers = () => {
+		const jwt = localStorage.getItem('jwt')
+		if (!jwt) return
+		fetchUsers(jwt)
+			.then(setUsers)
+			.catch(() => {})
+	}
 
 	// 🔐 LOGIN / REGISTER
 	const handleLogin = (name: string, password: string) => {
@@ -339,7 +358,20 @@ useEffect(() => {
 				<Route
 					path="/*"
 					element={
-						auth ? (
+						isRestoring ? (
+							<div
+								style={{
+									display: 'flex',
+									alignItems: 'center',
+									justifyContent: 'center',
+									height: '100vh',
+									background: 'rgba(11, 18, 32, 0.85)',
+									color: '#e5e7eb',
+								}}
+							>
+								Загрузка...
+							</div>
+						) : auth ? (
 							<ProtectedRouteWrapper
 								auth={auth}
 								status={status}
@@ -363,21 +395,22 @@ useEffect(() => {
 									setPendingUsers((prev) =>
 										prev.filter((u) => u.userId !== userId)
 									)
+									reloadUsers()
 								}}
 								onRejectJoinRequest={(userId) => {
 									send({ type: 'join_reject', userId })
 									setPendingUsers((prev) =>
 										prev.filter((u) => u.userId !== userId)
 									)
+									reloadUsers()
 								}}
 								onKickUser={(userId) => {
 									send({ type: 'kick_user', userId })
-									setUsers((prev) => prev.filter((u) => u.id !== userId))
+									reloadUsers()
 								}}
 								onClearMessages={() => {
 									send({ type: 'admin_clear_messages' })
 								}}
-								
 								onClearUsers={() => {
 									send({ type: 'admin_clear_users' })
 								}}

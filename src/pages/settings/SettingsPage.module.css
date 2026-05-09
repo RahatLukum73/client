@@ -2,6 +2,9 @@
 
 .container {
 	padding: 16px;
+	min-height: 100%;
+	max-width: 1200px;
+	margin: 0 auto;
 }
 
 .title {
@@ -19,14 +22,26 @@
 }
 
 .sectionTitle {
-	font-weight: 800;
+	font-weight: 600;
 	margin-bottom: 12px;
 	font-size: 18px;
 }
 
 .sectionSubtitle {
+	display: flex;
 	font-weight: 700;
 	margin-bottom: 12px;
+	font-size: 16px;
+	color: rgba(229, 231, 235, 0.9);
+}
+
+.sectionSubtitleListUsers {
+	display: inline-flex;
+	padding: 6px 0 0 6px;
+	border-radius: 4px;
+	font-weight: 700;
+	margin-bottom: 12px;
+	background: rgba(76, 121, 168, 1);
 	font-size: 16px;
 	color: rgba(229, 231, 235, 0.9);
 }
@@ -41,7 +56,7 @@
 .button {
 	height: 44px;
 	padding: 0 16px;
-	border-radius: 10px;
+	border-radius: 4px;
 	background: rgba(82, 136, 193, 1);
 	border: 0;
 	color: white;
@@ -68,7 +83,6 @@
 	color: rgba(229, 231, 235, 0.75);
 	font-size: 14px;
 	line-height: 1.5;
-	margin-bottom: 12px;
 }
 
 .accountSection {
@@ -79,6 +93,16 @@
 	display: flex;
 	flex-direction: column;
 	gap: 8px;
+	max-height: 500px;
+	opacity: 1;
+	transition: max-height 0.3s ease, opacity 0.3s ease;
+	overflow-y: auto;
+}
+
+.userList.collapsed {
+	max-height: 0;
+	opacity: 0;
+	overflow-y: hidden;
 }
 
 .userItem {
@@ -135,3 +159,28 @@
 	font-size: 12px;
 }
 
+.toggleButton {
+	background: transparent;
+	border: none;
+	color: rgba(229, 231, 235, 0.7);
+	cursor: pointer;
+	font-size: 16px;
+	margin-left: 8px;
+	transition: transform 0.2s, color 0.2s;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 24px;
+	height: 24px;
+	padding: 0;
+}
+
+.toggleButton:hover {
+	color: #e5e7eb;
+	transform: scale(1.1);
+}
+
+.toggleButton svg {
+	width: 16px;
+	height: 16px;
+}

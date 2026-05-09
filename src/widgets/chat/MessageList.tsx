@@ -1,10 +1,8 @@
 import { useState } from 'react'
-import type {
-	ChatMessage,
-	ChatAttachment,
-} from '../../shared/entities/message/model'
+import ConfirmModal from '../../shared/ui/ConfirmModal/ConfirmModal'
+import MessageItem from './MessageItem'
+import type { ChatMessage } from '../../shared/entities/message/model'
 import type { ChatProfile } from '../../features/auth/model/profile'
-import LinkifiedText from '../../shared/ui/LinkifiedText/LinkifiedText'
 import styles from './MessageList.module.css'
 
 // Функция для форматирования даты в "Сегодня", "Вчера" или "15 марта"
@@ -45,14 +43,6 @@ function formatDateLabel(date: Date): string {
 	const month = monthNames[date.getMonth()]
 
 	return `${day} ${month}`
-}
-
-// Функция для форматирования времени в "14:30"
-function formatTime(timestamp: string): string {
-	const date = new Date(timestamp)
-	const hours = date.getHours().toString().padStart(2, '0')
-	const minutes = date.getMinutes().toString().padStart(2, '0')
-	return `${hours}:${minutes}`
 }
 
 // Функция для группировки сообщений по датам
@@ -106,6 +96,11 @@ export default function MessageList(props: {
 }) {
 	const { profile, messages, isAdmin, onDeleteMessage } = props
 	const [selectedImage, setSelectedImage] = useState<string | null>(null)
+	const [deleteConfirm, setDeleteConfirm] = useState<{
+		messageId: string
+		messageText: string
+		isSelf: boolean
+	} | null>(null)
 
 	const groupedMessages = groupMessagesByDate(messages)
 
@@ -117,130 +112,44 @@ export default function MessageList(props: {
 		setSelectedImage(null)
 	}
 
+	const openDeleteConfirm = (
+		messageId: string,
+		messageText: string,
+		isSelf: boolean
+	) => {
+		// Проверяем права: админ может всё, пользователь — только своё
+		if (!isAdmin && !isSelf) return
+		setDeleteConfirm({ messageId, messageText, isSelf })
+	}
+
+	const closeDeleteConfirm = () => setDeleteConfirm(null)
+
+	const handleDeleteConfirm = () => {
+		if (deleteConfirm) {
+			onDeleteMessage(deleteConfirm.messageId)
+		}
+		closeDeleteConfirm()
+	}
+
 	return (
 		<div className={styles.messages} role="log" aria-live="polite">
 			{groupedMessages.map((group, groupIndex) => (
 				<div key={groupIndex}>
-					<div className={styles.dateSeparator}>{group.dateLabel}</div>
+					<div className={styles.dateSeparator}>
+						<div className={styles.dataSeparatorStyle}>{group.dateLabel}</div>
+					</div>
 					<div className={styles.dayGroup}>
-						{group.messages.map((m) => {
-							const isSelf = m.author.id === profile.userId
-							const avatarLetter = (
-								m.author.name?.[0] ?? '?'
-							).toUpperCase()
-
-							return (
-								<div
-									key={m.id}
-									className={
-										isSelf
-											? `${styles.row} ${styles.rowSelf}`
-											: styles.row
-									}
-								>
-									{!isSelf ? (
-										<div className={styles.avatar} aria-hidden="true">
-											{m.author.avatarUrl ? (
-												<img
-													src={m.author.avatarUrl}
-													alt={m.author.name}
-													className={styles.avatarImage}
-												/>
-											) : (
-												avatarLetter
-											)}
-										</div>
-									) : null}
-
-									<div
-										className={
-											isSelf
-												? `${styles.bubble} ${styles.bubbleSelf}`
-												: styles.bubble
-										}
-									>
-										<div className={styles.bubbleMeta}>
-											<div>
-												<span className={styles.author}>
-													{m.author.name}
-												</span>
-												<span className={styles.timestamp}>
-													{formatTime(m.timestamp)}
-												</span>
-											</div>
-											{isAdmin ? (
-												<div className={styles.bubbleActions}>
-													{m.author.id ? (
-														<button
-															className={styles.link}
-															onClick={() =>
-																onDeleteMessage(m.id)
-															}
-															type="button"
-														>
-															Удалить
-														</button>
-													) : null}
-												</div>
-											) : null}
-										</div>
-										{m.text && (
-											<div className={styles.text}>
-												<LinkifiedText text={m.text} />
-											</div>
-										)}
-										{m.attachments && m.attachments.length > 0 && (
-											<div className={styles.attachmentsContainer}>
-												{m.attachments.map((attachment) => (
-													<div
-														key={attachment.id}
-														className={styles.attachment}
-														onClick={() =>
-															handleImageClick(attachment.url)
-														}
-													>
-														{attachment.mimeType.startsWith(
-															'image/'
-														) ? (
-															<img
-																src={attachment.url}
-																alt={attachment.filename}
-																className={
-																	styles.attachmentImage
-																}
-																loading="lazy"
-															/>
-														) : (
-															<div
-																className={
-																	styles.attachmentInfo
-																}
-															>
-																📎 {attachment.filename}
-															</div>
-														)}
-													</div>
-												))}
-											</div>
-										)}
-									</div>
-
-									{isSelf ? (
-										<div className={styles.avatar} aria-hidden="true">
-											{profile.avatarUrl ? (
-												<img
-													src={profile.avatarUrl}
-													alt={profile.name}
-													className={styles.avatarImage}
-												/>
-											) : (
-												avatarLetter
-											)}
-										</div>
-									) : null}
-								</div>
-							)
-						})}
+						{group.messages.map((m) => (
+							<MessageItem
+								key={m.id}
+								message={m}
+								profile={profile}
+								isAdmin={isAdmin}
+								onDeleteMessage={onDeleteMessage}
+								onImageClick={handleImageClick}
+								onOpenDeleteConfirm={openDeleteConfirm}
+							/>
+						))}
 					</div>
 				</div>
 			))}
@@ -264,6 +173,20 @@ export default function MessageList(props: {
 					</div>
 				</div>
 			)}
+			<ConfirmModal
+				isOpen={deleteConfirm !== null}
+				title="Удалить сообщение?"
+				message={
+					deleteConfirm?.isSelf
+						? 'Вы уверены, что хотите удалить своё сообщение?'
+						: 'Вы уверены, что хотите удалить это сообщение?'
+				}
+				confirmText="Удалить"
+				cancelText="Отмена"
+				confirmVariant="danger"
+				onConfirm={handleDeleteConfirm}
+				onCancel={closeDeleteConfirm}
+			/>
 		</div>
 	)
 }
