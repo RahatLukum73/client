@@ -11,15 +11,6 @@ function escapeHtml(text: string): string {
 	return div.innerHTML
 }
 
-// Функция для преобразования URL в ссылку
-function urlToLink(url: string): string {
-	let href = url
-	if (!href.startsWith('http://') && !href.startsWith('https://')) {
-		href = 'https://' + href
-	}
-	return `<a href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer" style="color: #60a5fa; text-decoration: underline;">${escapeHtml(url)}</a>`
-}
-
 type LinkifiedTextProps = {
 	text: string
 }
