@@ -1,0 +1,72 @@
+.overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: rgba(0, 0, 0, 0.7);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 1000;
+	backdrop-filter: blur(2px);
+}
+
+.modal {
+	background: #1a2332;
+	border-radius: 12px;
+	padding: 24px;
+	width: 90%;
+	max-width: 400px;
+	box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.title {
+	margin: 0 0 12px 0;
+	font-size: 18px;
+	font-weight: 600;
+	color: #e5e7eb;
+}
+
+.message {
+	margin: 0 0 24px 0;
+	font-size: 14px;
+	color: rgba(229, 231, 235, 0.8);
+	line-height: 1.5;
+}
+
+.actions {
+	display: flex;
+	gap: 12px;
+	justify-content: flex-end;
+}
+
+.button {
+	padding: 10px 20px;
+	border-radius: 8px;
+	font-size: 14px;
+	font-weight: 500;
+	cursor: pointer;
+	border: none;
+	transition: opacity 0.2s;
+}
+
+.button:hover {
+	opacity: 0.9;
+}
+
+.buttonCancel {
+	background: rgba(255, 255, 255, 0.1);
+	color: #e5e7eb;
+}
+
+.buttonDanger {
+	background: #dc2626;
+	color: white;
+}
+
+.buttonPrimary {
+	background: #2563eb;
+	color: white;
+}

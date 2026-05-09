@@ -30,6 +30,16 @@ self.addEventListener('fetch', (event) => {
 	if (req.method !== 'GET') return
 
 	const url = new URL(req.url)
+
+	// Не кэшировать API и WebSocket запросы
+	if (
+		url.pathname.startsWith('/api/') ||
+		url.pathname.startsWith('/uploads/') ||
+		url.pathname.startsWith('/ws')
+	) {
+		return
+	}
+
 	if (url.origin !== self.location.origin) return
 
 	event.respondWith(
@@ -98,6 +108,7 @@ self.addEventListener('push', (event) => {
 				body: summaryBody,
 				data: { count },
 				icon: '/favicon.png',
+				badge: '/badge-icon.png',
 				tag: 'chat-summary',
 				renotify: true,
 			}

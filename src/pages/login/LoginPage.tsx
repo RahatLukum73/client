@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import '../../app/telegram.css'
+import styles from './LoginPage.module.css'
 
 type SocketStatus = 'disconnected' | 'connecting' | 'connected'
 
@@ -19,43 +19,45 @@ export default function LoginPage(props: {
 		name.trim().length > 0 && password.length >= 6 && wsStatus === 'connected'
 
 	return (
-		<div className="tg-shell">
-			<div className="tg-card">
-				<h1 className="tg-title">Хутор</h1>
+		<div className={styles.loginShell}>
+			<div className={styles.card}>
+				<h1 className={styles.title}>Хутор</h1>
 
 				{/* 🔁 переключатель */}
-				<div className="tg-auth">
+				<div className={styles.authToggle}>
 					<button
-						className={mode === 'login' ? 'active' : ''}
+						className={mode === 'login' ? styles.active : ''}
 						onClick={() => setMode('login')}
 					>
 						Вход
 					</button>
 					<button
-						className={mode === 'register' ? 'active' : ''}
+						className={mode === 'register' ? styles.active : ''}
 						onClick={() => setMode('register')}
 					>
 						Регистрация
 					</button>
 				</div>
 
-				<label className="tg-label">
+				<div className={styles.label}>
 					<input
+						className={styles.input}
 						value={name}
 						onChange={(e) => setName(e.target.value)}
 						placeholder="Имя"
 					/>
 
 					<input
+						className={styles.input}
 						type="password"
 						value={password}
 						onChange={(e) => setPassword(e.target.value)}
 						placeholder="Пароль"
 					/>
-				</label>
+				</div>
 
 				<button
-					className="tg-button"
+					className={styles.button}
 					disabled={!canSubmit}
 					onClick={() => {
 						if (mode === 'login') {
@@ -69,11 +71,9 @@ export default function LoginPage(props: {
 				</button>
 
 				{/* ❗ ошибка */}
-				{error && (
-					<div style={{ color: 'red', marginTop: 10 }}>{error}</div>
-				)}
+				{error && <div className={styles.error}>{error}</div>}
 
-				<div>WS: {wsStatus}</div>
+				<div className={styles.status}>WS: {wsStatus}</div>
 			</div>
 		</div>
 	)

@@ -1,4 +1,5 @@
 import type { WsJoinRequestToAdmin } from '../../shared/api/wsProtocol'
+import styles from './AdminPanel.module.css'
 
 export default function AdminPanel(props: {
 	joinRequests: WsJoinRequestToAdmin[]
@@ -8,24 +9,26 @@ export default function AdminPanel(props: {
 	const { joinRequests, onApprove, onReject } = props
 
 	return (
-		<div className="tg-admin">
-			<div className="tg-admin-section">
-				<div className="tg-admin-title">Вход в чат</div>
+		<div className={styles.admin}>
+			<div className={styles.adminSection}>
+				<div className={styles.adminTitle}>Вход в чат</div>
 				{joinRequests.length === 0 ? (
-					<div className="tg-text tg-text-muted">Нет ожидающих заявок</div>
+					<div className={`${styles.text} ${styles.textMuted}`}>
+						Нет ожидающих заявок
+					</div>
 				) : null}
 				{joinRequests.map((r) => (
-					<div key={r.userId} className="tg-admin-request">
-						<div className="tg-text">{r.name}</div>
-						<div className="tg-admin-actions">
+					<div key={r.userId} className={styles.adminRequest}>
+						<div className={styles.text}>{r.name}</div>
+						<div className={styles.adminActions}>
 							<button
-								className="tg-button tg-button-small"
+								className={`${styles.button} ${styles.buttonSmall}`}
 								onClick={() => onApprove(r.userId)}
 							>
 								✅
 							</button>
 							<button
-								className="tg-button tg-button-small tg-button-danger"
+								className={`${styles.button} ${styles.buttonSmall} ${styles.buttonDanger}`}
 								onClick={() => onReject(r.userId)}
 							>
 								❌
@@ -34,7 +37,6 @@ export default function AdminPanel(props: {
 					</div>
 				))}
 			</div>
-
 		</div>
 	)
 }

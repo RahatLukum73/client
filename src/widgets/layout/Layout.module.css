@@ -1,0 +1,16 @@
+/* Layout.module.css */
+
+.shell {
+	height: 100svh;
+	background: #0b1220;
+	color: #e5e7eb;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+}
+
+.main {
+	flex: 1;
+	padding-top: 72px; /* Отступ для фиксированного header */
+	overflow-y: auto;
+}

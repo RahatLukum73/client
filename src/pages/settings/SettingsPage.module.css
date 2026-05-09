@@ -1,0 +1,186 @@
+/* SettingsPage.module.css */
+
+.container {
+	padding: 16px;
+	min-height: 100%;
+	max-width: 1200px;
+	margin: 0 auto;
+}
+
+.title {
+	margin: 0 0 20px 0;
+	font-size: 24px;
+	font-weight: 700;
+}
+
+.adminSection {
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	border-radius: 14px;
+	padding: 16px;
+	background: rgba(255, 255, 255, 0.02);
+	margin-bottom: 20px;
+}
+
+.sectionTitle {
+	font-weight: 600;
+	margin-bottom: 12px;
+	font-size: 18px;
+}
+
+.sectionSubtitle {
+	display: flex;
+	font-weight: 700;
+	margin-bottom: 12px;
+	font-size: 16px;
+	color: rgba(229, 231, 235, 0.9);
+}
+
+.sectionSubtitleListUsers {
+	display: inline-flex;
+	padding: 6px 0 0 6px;
+	border-radius: 4px;
+	font-weight: 700;
+	margin-bottom: 12px;
+	background: rgba(76, 121, 168, 1);
+	font-size: 16px;
+	color: rgba(229, 231, 235, 0.9);
+}
+
+.buttonGroup {
+	display: flex;
+	gap: 8px;
+	margin-bottom: 16px;
+	flex-wrap: wrap;
+}
+
+.button {
+	height: 44px;
+	padding: 0 16px;
+	border-radius: 4px;
+	background: rgba(82, 136, 193, 1);
+	border: 0;
+	color: white;
+	font-weight: 600;
+	cursor: pointer;
+	transition: opacity 0.2s;
+}
+
+.button:hover {
+	opacity: 0.9;
+}
+
+.buttonDanger {
+	background: rgba(239, 68, 68, 0.15);
+	border: 1px solid rgba(239, 68, 68, 0.35);
+	color: #fca5a5;
+}
+
+.buttonFullWidth {
+	width: 100%;
+}
+
+.infoText {
+	color: rgba(229, 231, 235, 0.75);
+	font-size: 14px;
+	line-height: 1.5;
+}
+
+.accountSection {
+	margin-top: 24px;
+}
+
+.userList {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	max-height: 500px;
+	opacity: 1;
+	transition: max-height 0.3s ease, opacity 0.3s ease;
+	overflow-y: auto;
+}
+
+.userList.collapsed {
+	max-height: 0;
+	opacity: 0;
+	overflow-y: hidden;
+}
+
+.userItem {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 10px;
+	background: rgba(255, 255, 255, 0.05);
+	border-radius: 8px;
+}
+
+.userAvatar {
+	width: 36px;
+	height: 36px;
+	border-radius: 999px;
+	background: rgba(76, 121, 168, 1);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 14px;
+	font-weight: 600;
+	overflow: hidden;
+}
+
+.userAvatar img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.userInfo {
+	flex: 1;
+}
+
+.userName {
+	font-size: 14px;
+	font-weight: 500;
+	display: flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.adminBadge {
+	font-size: 12px;
+}
+
+.userStatus {
+	font-size: 12px;
+	color: rgba(229, 231, 235, 0.6);
+}
+
+.buttonSmall {
+	padding: 6px 10px;
+	font-size: 12px;
+}
+
+.toggleButton {
+	background: transparent;
+	border: none;
+	color: rgba(229, 231, 235, 0.7);
+	cursor: pointer;
+	font-size: 16px;
+	margin-left: 8px;
+	transition: transform 0.2s, color 0.2s;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 24px;
+	height: 24px;
+	padding: 0;
+}
+
+.toggleButton:hover {
+	color: #e5e7eb;
+	transform: scale(1.1);
+}
+
+.toggleButton svg {
+	width: 16px;
+	height: 16px;
+}
