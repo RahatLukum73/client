@@ -84,8 +84,8 @@ export default function MessageComposer(props: MessageComposerProps) {
 			}
 
 			// Проверка размера (5MB)
-			if (file.size > 10 * 1024 * 1024) {
-				alert(`Файл ${file.name} слишком большой. Максимум 10MB`)
+			if (file.size > 30 * 1024 * 1024) {
+				alert(`Файл ${file.name} слишком большой. Максимум 30MB`)
 				continue
 			}
 

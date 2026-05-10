@@ -168,10 +168,10 @@ export default function ProfilePage(props: ProfilePageProps) {
 			return
 		}
 
-		if (file.size > 5 * 1024 * 1024) {
+		if (file.size > 30 * 1024 * 1024) {
 			setAvatarMessage({
 				type: 'error',
-				text: 'Файл слишком большой. Максимум 5MB',
+				text: 'Файл слишком большой. Максимум 30MB',
 			})
 			return
 		}
@@ -274,7 +274,7 @@ export default function ProfilePage(props: ProfilePageProps) {
 								marginTop: '4px',
 							}}
 						>
-							Поддерживаются JPG, PNG, GIF, WEBP. Максимум 5MB.
+							Поддерживаются JPG, PNG, GIF, WEBP. Максимум 30MB.
 						</div>
 					</div>
 					{avatarFile && (
