@@ -4,5 +4,11 @@
 			"main": true,
 			"feature/spa-navigation": false
 		}
-	}
+	},
+	"rewrites": [
+		{
+			"source": "/(.*)",
+			"destination": "/index.html"
+		}
+	]
 }
