@@ -129,13 +129,16 @@ export default function MessageComposer(props: MessageComposerProps) {
 				throw new Error('Не авторизован')
 			}
 
-			const response = await fetch('/api/upload', {
-				method: 'POST',
-				body: formData,
-				headers: {
-					Authorization: `Bearer ${jwt}`,
-				},
-			})
+			const response = await fetch(
+				`${import.meta.env.VITE_API_URL}/api/upload`,
+				{
+					method: 'POST',
+					body: formData,
+					headers: {
+						Authorization: `Bearer ${jwt}`,
+					},
+				}
+			)
 
 			if (!response.ok) {
 				const errorText = await response.text()
