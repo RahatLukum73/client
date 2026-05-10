@@ -130,7 +130,7 @@ export default function MessageComposer(props: MessageComposerProps) {
 			}
 
 			const response = await fetch(
-				`${import.meta.env.VITE_WS_URL}/api/upload`,
+				`${import.meta.env.VITE_API_URL}/api/upload`,
 				{
 					method: 'POST',
 					body: formData,
