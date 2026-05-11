@@ -195,7 +195,7 @@ export default function ProfilePage(props: ProfilePageProps) {
 			const formData = new FormData()
 			formData.append('avatar', avatarFile)
 
-			const response = await fetch('/api/profile/avatar', {
+			const response = await fetch(`${import.meta.env.VITE_API_URL}/api/profile/avatar`, {
 				method: 'POST',
 				headers: {
 					Authorization: `Bearer ${jwt}`,
