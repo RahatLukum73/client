@@ -109,13 +109,13 @@ export default function SettingsPage(props: SettingsPageProps) {
 									className={`${styles.button} ${styles.buttonDanger}`}
 									onClick={openClearMessagesConfirm}
 								>
-									Удалить сообщения
+									Удалить все сообщения
 								</button>
 								<button
 									className={`${styles.button} ${styles.buttonDanger}`}
 									onClick={openClearUsersConfirm}
 								>
-									Удалить пользователей
+									Удалить всех пользователей
 								</button>
 							</div>
 
