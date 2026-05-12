@@ -156,7 +156,7 @@
 
 	border-radius: 20px;
 
-	max-width: min(78vw, 340px);
+	max-width: min(66vw, 280px);
 
 	overflow: hidden;
 }
@@ -218,7 +218,7 @@
 
 	margin-top: 6px;
 
-	max-width: min(78vw, 340px);
+	max-width: min(66vw, 280px);
 }
 
 /* =========================================
@@ -234,7 +234,7 @@
 
 	width: fit-content;
 
-	max-width: min(78vw, 340px);
+	max-width: min(66vw, 280px);
 
 	border-radius: 18px;
 
@@ -261,7 +261,7 @@
 	width: auto;
 	height: auto;
 
-	max-width: min(78vw, 340px);
+	max-width: min(66vw, 280px);
 
 	max-height: 62vh;
 
@@ -288,7 +288,7 @@
 
 	width: 100%;
 
-	max-width: min(78vw, 340px);
+	max-width: min(66vw, 280px);
 
 	padding: 10px 12px;
 
