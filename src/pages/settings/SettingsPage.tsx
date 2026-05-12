@@ -4,6 +4,7 @@ import type { ChatProfile } from '../../features/auth/model/profile'
 import type { ChatUser } from '../../shared/api/users'
 import AdminPanel from '../../widgets/admin/AdminPanel'
 import ConfirmModal from '../../shared/ui/ConfirmModal/ConfirmModal'
+import { useServiceWorker } from '../../shared/lib/useServiceWorker'
 import styles from './SettingsPage.module.css'
 
 type ConfirmAction = {
@@ -38,6 +39,8 @@ export default function SettingsPage(props: SettingsPageProps) {
 		onKickUser,
 		onLogout,
 	} = props
+
+	const { hasUpdate, applyUpdate } = useServiceWorker()
 
 	const [confirmAction, setConfirmAction] = useState<ConfirmAction>(null)
 	const [isUsersListCollapsed, setIsUsersListCollapsed] = useState(() => {
@@ -92,7 +95,9 @@ export default function SettingsPage(props: SettingsPageProps) {
 			<h1 className={styles.title}>Настройки</h1>
 
 			<div className={styles.adminSection}>
-				{!isAdmin && <h2 className={styles.sectionTitle}>Список пользователей</h2>}
+				{!isAdmin && (
+					<h2 className={styles.sectionTitle}>Список пользователей</h2>
+				)}
 				{isAdmin && (
 					<>
 						<h2 className={styles.sectionTitle}>
@@ -104,13 +109,13 @@ export default function SettingsPage(props: SettingsPageProps) {
 									className={`${styles.button} ${styles.buttonDanger}`}
 									onClick={openClearMessagesConfirm}
 								>
-									Удалить все сообщения
+									Удалить сообщения
 								</button>
 								<button
 									className={`${styles.button} ${styles.buttonDanger}`}
 									onClick={openClearUsersConfirm}
 								>
-									Удалить всех пользователей
+									Удалить пользователей
 								</button>
 							</div>
 
@@ -209,6 +214,14 @@ export default function SettingsPage(props: SettingsPageProps) {
 
 			<div className={`${styles.adminSection} ${styles.accountSection}`}>
 				<h2 className={styles.sectionTitle}>Аккаунт</h2>
+				{hasUpdate && (
+					<button
+						className={`${styles.button} ${styles.buttonPrimary} ${styles.buttonFullWidth}`}
+						onClick={applyUpdate}
+					>
+						🔄 Доступно обновление! Обновить
+					</button>
+				)}
 				<button
 					className={`${styles.button} ${styles.buttonDanger} ${styles.buttonFullWidth}`}
 					onClick={openLogoutConfirm}

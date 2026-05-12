@@ -25,6 +25,26 @@ self.addEventListener('activate', (event) => {
 	)
 })
 
+// Слушаем сообщение от клиента о необходимости обновления
+self.addEventListener('message', (event) => {
+	if (event.data && event.data.type === 'SKIP_WAITING') {
+		self.skipWaiting()
+	}
+})
+
+// Отправляем сообщение всем клиентам, когда новый SW устанавливается (ждет активации)
+self.addEventListener('statechange', (event) => {
+	if (event.target && event.target.state === 'installed') {
+		self.clients.matchAll({ type: 'window' }).then((clients) => {
+			clients.forEach((client) => {
+				client.postMessage({
+					type: 'NEW_VERSION_AVAILABLE',
+				})
+			})
+		})
+	}
+})
+
 self.addEventListener('fetch', (event) => {
 	const req = event.request
 	if (req.method !== 'GET') return
