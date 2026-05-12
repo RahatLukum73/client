@@ -30,9 +30,17 @@ export default function MessageItem(props: MessageItemProps) {
 		delay: 600,
 	})
 
-	const bubbleClass = isSelf
-		? `${styles.bubble} ${styles.bubbleSelf} ${styles.bubbleLongPress}`
-		: `${styles.bubble} ${styles.bubbleLongPress}`
+	const hasOnlyImage =
+		!message.text &&
+		message.attachments?.length === 1 &&
+		message.attachments[0].mimeType.startsWith('image/')
+
+	const bubbleClass = `
+	${styles.bubble}
+	${isSelf ? styles.bubbleSelf : ''}
+	${styles.bubbleLongPress}
+	${hasOnlyImage ? styles.bubbleImageOnly : ''}
+`
 
 	const finalBubbleClass = bubbleClass
 
