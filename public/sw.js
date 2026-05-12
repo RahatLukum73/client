@@ -32,19 +32,6 @@ self.addEventListener('message', (event) => {
 	}
 })
 
-// Отправляем сообщение всем клиентам, когда новый SW устанавливается (ждет активации)
-self.addEventListener('statechange', (event) => {
-	if (event.target && event.target.state === 'installed') {
-		self.clients.matchAll({ type: 'window' }).then((clients) => {
-			clients.forEach((client) => {
-				client.postMessage({
-					type: 'NEW_VERSION_AVAILABLE',
-				})
-			})
-		})
-	}
-})
-
 self.addEventListener('fetch', (event) => {
 	const req = event.request
 	if (req.method !== 'GET') return

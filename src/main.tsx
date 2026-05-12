@@ -14,34 +14,42 @@ createRoot(document.getElementById('root')!).render(
 if ('serviceWorker' in navigator) {
 	window.addEventListener('load', async () => {
 		try {
-			const registration = await navigator.serviceWorker.register('/sw.js', {
-				type: 'module',
-			})
+			const registration = await navigator.serviceWorker.register('/sw.js?v=2')
 
-			console.log('[SW] Service Worker зарегистрирован', registration)
+			console.log('[SW] registered')
 
-			// Слушаем сообщения от Service Worker
-			navigator.serviceWorker.addEventListener('message', (event) => {
-				if (event.data?.type === 'NEW_VERSION_AVAILABLE') {
-					console.log('[SW] Доступна новая версия приложения')
+			// Проверяем обновления
+			registration.onupdatefound = () => {
+				console.log('[SW] update found')
+
+				const newWorker = registration.installing
+
+				if (!newWorker) return
+
+				newWorker.onstatechange = () => {
+					console.log('[SW] state:', newWorker.state)
+
+					// Новый SW установлен
+					if (
+						newWorker.state === 'installed' &&
+						navigator.serviceWorker.controller
+					) {
+						console.log('[SW] NEW VERSION AVAILABLE')
+
+						window.dispatchEvent(new CustomEvent('sw-update-available'))
+					}
 				}
-			})
-
-			// Проверяем, есть ли waiting SW сразу после регистрации
-			if (registration.waiting) {
-				console.log('[SW] Есть обновлённый SW в очереди')
 			}
 
-			// Периодическая проверка обновлений (каждые 4 часа)
+			// Проверка обновлений каждые 5 минут
 			setInterval(
-				async () => {
-					await registration.update()
-					console.log('[SW] Проверка обновлений')
+				() => {
+					registration.update()
 				},
-				4 * 60 * 60 * 1000
+				5 * 60 * 1000
 			)
-		} catch (error) {
-			console.error('[SW] Ошибка регистрации Service Worker:', error)
+		} catch (err) {
+			console.error('[SW] registration failed', err)
 		}
 	})
 }
