@@ -200,7 +200,7 @@ export default function SettingsPage(props: SettingsPageProps) {
 							</div>
 							{isAdmin && !u.isAdmin && (
 								<button
-									className={`${styles.button} ${styles.buttonDanger} ${styles.buttonSmall}`}
+									className={`${styles.buttonDanger} ${styles.buttonSmall}`}
 									onClick={() => openKickConfirm(u.id, u.name)}
 									disabled={u.id === profile.userId}
 								>
@@ -214,21 +214,24 @@ export default function SettingsPage(props: SettingsPageProps) {
 
 			<div className={`${styles.adminSection} ${styles.accountSection}`}>
 				<h2 className={styles.sectionTitle}>Аккаунт</h2>
-				<button
-	className={`${styles.button} ${styles.buttonPrimary} ${styles.buttonFullWidth}`}
-	onClick={checkForUpdates}
-	disabled={isUpdating}
->
-	{isUpdating
-		? 'Проверка обновлений...'
-		: '🔄 Проверить обновления'}
-</button>
-				<button
-					className={`${styles.button} ${styles.buttonDanger} ${styles.buttonFullWidth}`}
-					onClick={openLogoutConfirm}
-				>
-					Выйти из аккаунта
-				</button>
+				<div className={styles.buttonGroup}>
+					<button
+						className={`${styles.button} ${styles.buttonPrimary} ${styles.buttonFullWidth}`}
+						onClick={checkForUpdates}
+						disabled={isUpdating}
+					>
+						{isUpdating
+							? 'Проверка обновлений...'
+							: '🔄 Проверить обновления'}
+					</button>
+					<button
+						className={`${styles.button} ${styles.buttonDanger} ${styles.buttonFullWidth}`}
+						onClick={openLogoutConfirm}
+					>
+						Выйти из аккаунта
+					</button>
+				</div>
+				<div className={styles.version}>Xutor Chat v{__APP_VERSION__}</div>
 			</div>
 			<ConfirmModal
 				isOpen={confirmAction !== null}

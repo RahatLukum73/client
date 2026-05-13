@@ -66,7 +66,7 @@ export default function ProfilePage(props: ProfilePageProps) {
 			const jwt = localStorage.getItem('jwt')
 			if (!jwt) throw new Error('Не авторизован')
 
-			const response = await fetch('/api/profile/name', {
+			const response = await fetch(`${import.meta.env.VITE_API_URL}/api/profile/name`, {
 				method: 'PUT',
 				headers: {
 					'Content-Type': 'application/json',
@@ -121,7 +121,7 @@ export default function ProfilePage(props: ProfilePageProps) {
 			const jwt = localStorage.getItem('jwt')
 			if (!jwt) throw new Error('Не авторизован')
 
-			const response = await fetch('/api/profile/password', {
+			const response = await fetch(`${import.meta.env.VITE_API_URL}/api/profile/password`, {
 				method: 'PUT',
 				headers: {
 					'Content-Type': 'application/json',
