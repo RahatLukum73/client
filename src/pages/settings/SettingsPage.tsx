@@ -40,7 +40,7 @@ export default function SettingsPage(props: SettingsPageProps) {
 		onLogout,
 	} = props
 
-	const { hasUpdate, applyUpdate } = useServiceWorker()
+	const { checkForUpdates, isUpdating } = useServiceWorker()
 
 	const [confirmAction, setConfirmAction] = useState<ConfirmAction>(null)
 	const [isUsersListCollapsed, setIsUsersListCollapsed] = useState(() => {
@@ -214,14 +214,15 @@ export default function SettingsPage(props: SettingsPageProps) {
 
 			<div className={`${styles.adminSection} ${styles.accountSection}`}>
 				<h2 className={styles.sectionTitle}>Аккаунт</h2>
-				{hasUpdate && (
-					<button
-						className={`${styles.button} ${styles.buttonPrimary} ${styles.buttonFullWidth}`}
-						onClick={applyUpdate}
-					>
-						🔄 Доступно обновление! Обновить
-					</button>
-				)}
+				<button
+	className={`${styles.button} ${styles.buttonPrimary} ${styles.buttonFullWidth}`}
+	onClick={checkForUpdates}
+	disabled={isUpdating}
+>
+	{isUpdating
+		? 'Проверка обновлений...'
+		: '🔄 Проверить обновления'}
+</button>
 				<button
 					className={`${styles.button} ${styles.buttonDanger} ${styles.buttonFullWidth}`}
 					onClick={openLogoutConfirm}

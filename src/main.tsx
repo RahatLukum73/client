@@ -14,40 +14,10 @@ createRoot(document.getElementById('root')!).render(
 if ('serviceWorker' in navigator) {
 	window.addEventListener('load', async () => {
 		try {
-			const registration = await navigator.serviceWorker.register('/sw.js?v=2')
+			const registration = await navigator.serviceWorker.register('/sw.js?v=1.1.1')
 
-			console.log('[SW] registered')
+			console.log('[SW] registered', registration)
 
-			// Проверяем обновления
-			registration.onupdatefound = () => {
-				console.log('[SW] update found')
-
-				const newWorker = registration.installing
-
-				if (!newWorker) return
-
-				newWorker.onstatechange = () => {
-					console.log('[SW] state:', newWorker.state)
-
-					// Новый SW установлен
-					if (
-						newWorker.state === 'installed' &&
-						navigator.serviceWorker.controller
-					) {
-						console.log('[SW] NEW VERSION AVAILABLE')
-
-						window.dispatchEvent(new CustomEvent('sw-update-available'))
-					}
-				}
-			}
-
-			// Проверка обновлений каждые 5 минут
-			setInterval(
-				() => {
-					registration.update()
-				},
-				5 * 60 * 1000
-			)
 		} catch (err) {
 			console.error('[SW] registration failed', err)
 		}
