@@ -148,16 +148,34 @@ function ProtectedRouteWrapper(props: {
 }
 
 export default function App() {
-	const [auth, setAuth] = useState<Auth | null>(null)
+	const [auth, setAuth] = useState<Auth | null>(() => {
+		const saved = localStorage.getItem('auth')
+
+		if (!saved) return null
+
+		try {
+			return JSON.parse(saved)
+		} catch {
+			return null
+		}
+	})
 	const [status, setStatus] = useState<'pending' | 'approved' | 'kicked'>(
 		'pending'
 	)
 	const [authError, setAuthError] = useState<string | null>(null)
-	const [isRestoring, setIsRestoring] = useState(
-		() => !!localStorage.getItem('jwt')
-	)
+	const [isRestoring, setIsRestoring] = useState(false)
 
-	const [messages, setMessages] = useState<any[]>([])
+	const [messages, setMessages] = useState<any[]>(() => {
+		const saved = localStorage.getItem('messages')
+
+		if (!saved) return []
+
+		try {
+			return JSON.parse(saved)
+		} catch {
+			return []
+		}
+	})
 	const [pendingUsers, setPendingUsers] = useState<WsJoinRequestToAdmin[]>([])
 	const [users, setUsers] = useState<ChatUser[]>([])
 
@@ -171,15 +189,18 @@ export default function App() {
 		if (msg.type === 'login_success' || msg.type === 'register_success') {
 			setIsRestoring(false)
 			setAuthError(null)
-			localStorage.setItem('jwt', msg.jwt)
-
-			setAuth({
+			const authData = {
 				jwt: msg.jwt,
 				userId: msg.userId,
 				isAdmin: msg.isAdmin,
 				name: msg.name.trim(),
 				avatarUrl: msg.avatarUrl,
-			})
+			}
+
+			localStorage.setItem('jwt', msg.jwt)
+			localStorage.setItem('auth', JSON.stringify(authData))
+
+			setAuth(authData)
 		}
 		if (msg.type === 'auth_error') {
 			setIsRestoring(false)
@@ -205,6 +226,8 @@ export default function App() {
 			setAuth(null)
 			setStatus('pending')
 			localStorage.removeItem('jwt')
+			localStorage.removeItem('auth')
+			localStorage.removeItem('messages')
 		}
 
 		// 👮 ADMIN PANEL
@@ -245,6 +268,8 @@ export default function App() {
 				setAuth(null)
 				setStatus('pending')
 				localStorage.removeItem('jwt')
+				localStorage.removeItem('auth')
+				localStorage.removeItem('messages')
 			}
 		}
 
@@ -254,6 +279,8 @@ export default function App() {
 			setAuth(null)
 			setStatus('pending')
 			localStorage.removeItem('jwt')
+			localStorage.removeItem('auth')
+			localStorage.removeItem('messages')
 		}
 	})
 
@@ -300,6 +327,10 @@ export default function App() {
 		subscribeForPush(auth.jwt)
 	}, [auth])
 
+	useEffect(() => {
+		localStorage.setItem('messages', JSON.stringify(messages))
+	}, [messages])
+
 	const reloadUsers = () => {
 		const jwt = localStorage.getItem('jwt')
 		if (!jwt) return
@@ -328,6 +359,8 @@ export default function App() {
 	const handleLogout = () => {
 		disconnect()
 		localStorage.removeItem('jwt')
+		localStorage.removeItem('auth')
+		localStorage.removeItem('messages')
 		setAuth(null)
 		setStatus('pending')
 		setMessages([])
@@ -422,7 +455,16 @@ export default function App() {
 								}}
 							/>
 						) : (
-							<Navigate to="/login" replace />
+							<Route
+								path="/"
+								element={
+									auth ? (
+										<Navigate to="/chat" replace />
+									) : (
+										<Navigate to="/login" replace />
+									)
+								}
+							/>
 						)
 					}
 				/>
