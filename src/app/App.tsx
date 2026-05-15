@@ -26,6 +26,7 @@ function ProtectedRouteWrapper(props: {
 	auth: Auth
 	status: 'unknown' | 'pending' | 'approved' | 'kicked'
 	wsStatus: 'disconnected' | 'connecting' | 'connected'
+	isRestoring: boolean
 	messages: any[]
 	users: ChatUser[]
 	pendingUsers: WsJoinRequestToAdmin[]
@@ -42,6 +43,7 @@ function ProtectedRouteWrapper(props: {
 	const {
 		auth,
 		status,
+		isRestoring,
 		wsStatus,
 		messages,
 		users,
@@ -57,15 +59,13 @@ function ProtectedRouteWrapper(props: {
 		onProfileUpdate,
 	} = props
 
-
 	if (status === 'unknown') {
-	return null
-}
+		return null
+	}
 	// Если статус "pending", показываем ожидание
-	if (status === 'pending') {
+	if (status === 'pending' && !isRestoring) {
 		return <div>Ожидание одобрения админа...</div>
 	}
-
 	// Если статус "kicked", перенаправляем на логин
 	if (status === 'kicked') {
 		return <Navigate to="/login" replace />
@@ -163,9 +163,22 @@ export default function App() {
 			return null
 		}
 	})
-	const [status, setStatus] = useState<'unknown' | 'pending' | 'approved' | 'kicked'>(
-		'pending'
-	)
+	const [status, setStatus] = useState<
+		'unknown' | 'pending' | 'approved' | 'kicked'
+	>(() => {
+		const saved = localStorage.getItem('chat-status')
+
+		if (
+			saved === 'approved' ||
+			saved === 'pending' ||
+			saved === 'kicked' ||
+			saved === 'unknown'
+		) {
+			return saved
+		}
+
+		return 'pending'
+	})
 	const [authError, setAuthError] = useState<string | null>(null)
 	const [isRestoring, setIsRestoring] = useState(false)
 
@@ -335,6 +348,10 @@ export default function App() {
 		localStorage.setItem('messages', JSON.stringify(messages))
 	}, [messages])
 
+	useEffect(() => {
+		localStorage.setItem('chat-status', status)
+	}, [status])
+
 	const reloadUsers = () => {
 		const jwt = localStorage.getItem('jwt')
 		if (!jwt) return
@@ -413,6 +430,7 @@ export default function App() {
 								auth={auth}
 								status={status}
 								wsStatus={wsStatus}
+								isRestoring={isRestoring}
 								messages={messages}
 								users={users}
 								pendingUsers={pendingUsers}
