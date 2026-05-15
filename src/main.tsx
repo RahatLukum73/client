@@ -14,7 +14,7 @@ createRoot(document.getElementById('root')!).render(
 if ('serviceWorker' in navigator) {
 	window.addEventListener('load', async () => {
 		try {
-			const registration = await navigator.serviceWorker.register('/sw.js?v=1.1.2')
+			const registration = await navigator.serviceWorker.register('/sw.js?v=1.1.3')
 
 			console.log('[SW] registered', registration)
 

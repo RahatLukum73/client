@@ -1,4 +1,4 @@
-const CACHE_NAME = 'chatt-cache-v3'
+const CACHE_NAME = 'chatt-cache-v4'
 const CORE_ASSETS = ['/']
 let unreadMessages = []
 const MAX_STORED = 10
