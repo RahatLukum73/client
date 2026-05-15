@@ -24,7 +24,7 @@ type Auth = {
 // Компонент для защиты маршрутов
 function ProtectedRouteWrapper(props: {
 	auth: Auth
-	status: 'pending' | 'approved' | 'kicked'
+	status: 'unknown' | 'pending' | 'approved' | 'kicked'
 	wsStatus: 'disconnected' | 'connecting' | 'connected'
 	messages: any[]
 	users: ChatUser[]
@@ -57,6 +57,10 @@ function ProtectedRouteWrapper(props: {
 		onProfileUpdate,
 	} = props
 
+
+	if (status === 'unknown') {
+	return null
+}
 	// Если статус "pending", показываем ожидание
 	if (status === 'pending') {
 		return <div>Ожидание одобрения админа...</div>
@@ -159,7 +163,7 @@ export default function App() {
 			return null
 		}
 	})
-	const [status, setStatus] = useState<'pending' | 'approved' | 'kicked'>(
+	const [status, setStatus] = useState<'unknown' | 'pending' | 'approved' | 'kicked'>(
 		'pending'
 	)
 	const [authError, setAuthError] = useState<string | null>(null)
