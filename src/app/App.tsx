@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { HashRouter , Routes, Route, Navigate } from 'react-router-dom'
 import LoginPage from '../pages/login/LoginPage'
 import ChatPage from '../pages/chat/ChatPage'
 import ProfilePage from '../pages/profile/ProfilePage'
@@ -389,7 +389,7 @@ export default function App() {
 	}
 
 	return (
-		<BrowserRouter>
+		<HashRouter >
 			<Routes>
 				{/* Маршрут для логина */}
 				<Route
@@ -494,6 +494,6 @@ export default function App() {
 				{/* Корневой маршрут перенаправляет на /login */}
 				<Route path="/" element={<Navigate to="/login" replace />} />
 			</Routes>
-		</BrowserRouter>
+		</HashRouter>
 	)
 }

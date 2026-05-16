@@ -20,6 +20,7 @@
 	background: rgba(25, 32, 53, 1);
 	border: 1px solid rgba(255, 255, 255, 0.1);
 	width: 100%;
+	overflow: hidden;
 }
 
 .inputComposer {
@@ -27,9 +28,11 @@
 	min-height: 34px;
 	max-height: 150px;
 	padding: 8px 8px 6px 8px;
-	background: transparent;
+	background: rgba(25, 32, 53, 1);
 	border: none;
 	outline: none;
+		-webkit-appearance: none;
+	appearance: none;
 	color: #e5e7eb;
 	font-size: 16px;
 	resize: none;
