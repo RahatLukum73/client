@@ -77,6 +77,7 @@ export default function Header(props: HeaderProps) {
 				<nav className={styles.nav}>
 					<NavLink
 						to="/chat"
+						replace
 						className={({ isActive }) =>
 							`${styles.navButton} ${isActive ? styles.active : ''}`
 						}
@@ -89,6 +90,7 @@ export default function Header(props: HeaderProps) {
 
 					<NavLink
 						to="/profile"
+						replace
 						className={({ isActive }) =>
 							`${styles.navButton} ${isActive ? styles.active : ''}`
 						}
@@ -101,6 +103,7 @@ export default function Header(props: HeaderProps) {
 
 					<NavLink
 						to="/settings"
+						replace
 						className={({ isActive }) =>
 							`${styles.navButton} ${isActive ? styles.active : ''}`
 						}

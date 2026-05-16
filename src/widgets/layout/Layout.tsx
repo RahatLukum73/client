@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useRef } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import Header from './Header'
 import type { ChatProfile } from '../../features/auth/model/profile'
@@ -12,26 +12,53 @@ type LayoutProps = {
 }
 
 export default function Layout(props: LayoutProps) {
-	const location = useLocation()
-	const navigate = useNavigate()
 	const { profile, wsStatus, joinRequestsCount, children } = props
 
-	useEffect(() => {
-	const handlePopState = () => {
-		if (location.pathname !== '/chat') {
-			navigate('/chat', { replace: true })
+	const navigate = useNavigate()
+	const location = useLocation()
+
+	const touchStartX = useRef(0)
+	const touchEndX = useRef(0)
+
+	const handleTouchStart = (e: React.TouchEvent) => {
+		touchStartX.current = e.changedTouches[0].screenX
+	}
+
+	const handleTouchEnd = (e: React.TouchEvent) => {
+		touchEndX.current = e.changedTouches[0].screenX
+
+		const deltaX = touchStartX.current - touchEndX.current
+
+		// минимальная дистанция свайпа
+		if (Math.abs(deltaX) < 50) return
+
+		const current = location.pathname
+
+		// свайп влево
+		if (deltaX > 0) {
+			if (current === '/chat') {
+				navigate('/profile')
+			} else if (current === '/profile') {
+				navigate('/settings')
+			}
+		}
+
+		// свайп вправо
+		if (deltaX < 0) {
+			if (current === '/settings') {
+				navigate('/profile')
+			} else if (current === '/profile') {
+				navigate('/chat')
+			}
 		}
 	}
 
-	window.addEventListener('popstate', handlePopState)
-
-	return () => {
-		window.removeEventListener('popstate', handlePopState)
-	}
-}, [location.pathname])
-
 	return (
-		<div className={styles.shell}>
+		<div
+			className={styles.shell}
+			onTouchStart={handleTouchStart}
+			onTouchEnd={handleTouchEnd}
+		>
 			<Header
 				profile={profile}
 				wsStatus={wsStatus}
