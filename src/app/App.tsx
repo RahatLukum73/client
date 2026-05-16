@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { HashRouter , Routes, Route, Navigate } from 'react-router-dom'
+import InstallPrompt from '../widgets/install/InstallPrompt'
 import LoginPage from '../pages/login/LoginPage'
 import ChatPage from '../pages/chat/ChatPage'
 import ProfilePage from '../pages/profile/ProfilePage'
@@ -389,6 +390,8 @@ export default function App() {
 	}
 
 	return (
+		<>
+		<InstallPrompt />
 		<HashRouter >
 			<Routes>
 				{/* Маршрут для логина */}
@@ -495,5 +498,6 @@ export default function App() {
 				<Route path="/" element={<Navigate to="/login" replace />} />
 			</Routes>
 		</HashRouter>
+		</>
 	)
 }
