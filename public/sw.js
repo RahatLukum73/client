@@ -1,4 +1,4 @@
-const CACHE_NAME = 'chatt-cache-v10'
+const CACHE_NAME = 'chatt-cache-v11'
 const CORE_ASSETS = ['/']
 let unreadMessages = []
 const MAX_STORED = 10
@@ -13,15 +13,29 @@ self.addEventListener('install', (event) => {
 	)
 })
 
+// self.addEventListener('activate', (event) => {
+// 	event.waitUntil(
+// 		caches
+// 			.keys()
+// 			.then((keys) =>
+// 				Promise.all(
+// 					keys.map((k) => (k === CACHE_NAME ? null : caches.delete(k)))
+// 				).then(() => {})
+// 			)
+// 	)
+// })
+
 self.addEventListener('activate', (event) => {
 	event.waitUntil(
-		caches
-			.keys()
-			.then((keys) =>
-				Promise.all(
-					keys.map((k) => (k === CACHE_NAME ? null : caches.delete(k)))
-				).then(() => {})
+		(async () => {
+			const keys = await caches.keys()
+
+			await Promise.all(
+				keys.map((k) => (k === CACHE_NAME ? null : caches.delete(k)))
 			)
+
+			await self.clients.claim()
+		})()
 	)
 })
 

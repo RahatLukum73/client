@@ -9,52 +9,64 @@ function urlBase64ToUint8Array(base64String: string): Uint8Array {
 }
 
 export async function subscribeForPush(jwtToken: string): Promise<void> {
-	console.log('[Push] subscribeForPush called')
+	try {
+		console.log('[Push] subscribeForPush called')
 
-	if (!('serviceWorker' in navigator)) return
-	if (!('PushManager' in window)) return
+		if (!('serviceWorker' in navigator)) return
+		if (!('PushManager' in window)) return
 
-	const permission = await Notification.requestPermission()
-	if (permission !== 'granted') return
+		const permission = await Notification.requestPermission()
+		if (permission !== 'granted') return
 
-	const publicKey = import.meta.env.VITE_VAPID_PUBLIC_KEY
-	if (!publicKey) return
+		const publicKey = import.meta.env.VITE_VAPID_PUBLIC_KEY
+		if (!publicKey) return
 
-	const reg = await navigator.serviceWorker.ready
+		const reg = await navigator.serviceWorker.ready
 
-	const existing = await reg.pushManager.getSubscription()
+		let subscription = await reg.pushManager.getSubscription()
 
-	if (existing) {
-		console.log('[Push] unsubscribe old subscription')
+		if (!subscription) {
+			const applicationServerKey = urlBase64ToUint8Array(publicKey)
+
+			subscription = await reg.pushManager.subscribe({
+				userVisibleOnly: true,
+				applicationServerKey:
+					applicationServerKey as unknown as BufferSource,
+			})
+		}
+
+		console.log('[Push] endpoint:', subscription.endpoint)
+
+		const API_URL = import.meta.env.VITE_WS_URL.replace(
+			'wss://',
+			'https://'
+		).replace('ws://', 'http://')
+
+		const response = await fetch(`${API_URL}/api/push/subscribe`, {
+			method: 'POST',
+			headers: {
+				'content-type': 'application/json',
+				Authorization: `Bearer ${jwtToken}`,
+			},
+			body: JSON.stringify({
+				subscription: {
+					endpoint: subscription.endpoint,
+					keys: subscription.toJSON().keys,
+				},
+			}),
+		})
+
+		if (!response.ok) {
+			console.error(
+				'[Push] Subscribe failed:',
+				response.status,
+				await response.text()
+			)
+			return
+		}
+
+		console.log('[Push] Subscribed OK')
+	} catch (err) {
+		console.error('[Push] subscribeForPush error:', err)
 	}
-
-	const applicationServerKey = urlBase64ToUint8Array(publicKey)
-
-	const subscription = await reg.pushManager.subscribe({
-		userVisibleOnly: true,
-		applicationServerKey: applicationServerKey as unknown as BufferSource,
-	})
-
-	const API_URL = import.meta.env.VITE_WS_URL.replace(
-		'wss://',
-		'https://'
-	).replace('ws://', 'http://')
-
-	const payload = {
-		endpoint: subscription.endpoint,
-		keys: subscription.toJSON().keys,
-	}
-
-	await fetch(`${API_URL}/api/push/subscribe`, {
-		method: 'POST',
-		headers: {
-			'content-type': 'application/json',
-			Authorization: `Bearer ${jwtToken}`,
-		},
-		body: JSON.stringify({
-			subscription: payload,
-		}),
-	})
-
-	console.log('[Push] Subscribed OK')
 }
