@@ -3,6 +3,7 @@ import { getUsernameColor } from '../../shared/lib/hooks/getUsernameColor'
 import type { ChatMessage } from '../../shared/entities/message/model'
 import type { ChatProfile } from '../../features/auth/model/profile'
 import LinkifiedText from '../../shared/ui/LinkifiedText/LinkifiedText'
+import { useOnlineUsers } from '../../features/online/model/useOnlineUsers'
 import styles from './MessageList.module.css'
 
 type MessageItemProps = {
@@ -24,6 +25,9 @@ export default function MessageItem(props: MessageItemProps) {
 	const isSelf = message.author.id === profile.userId
 	const avatarLetter = (message.author.name?.[0] ?? '?').toUpperCase()
 	const authorColor = getUsernameColor(message.author.id)
+
+	const onlineUsers = useOnlineUsers()
+	const isOnline = onlineUsers.has(message.author.id)
 
 	const longPressProps = useLongPress({
 		onLongPress: () => onOpenDeleteConfirm(message.id, message.text, isSelf),
@@ -52,6 +56,7 @@ export default function MessageItem(props: MessageItemProps) {
 					style={{ backgroundColor: authorColor }}
 					aria-hidden="true"
 				>
+				{isOnline && <span className={styles.onlineDot}></span>}
 					{message.author.avatarUrl ? (
 						<img
 							src={message.author.avatarUrl}
@@ -137,6 +142,7 @@ export default function MessageItem(props: MessageItemProps) {
 					style={{ backgroundColor: authorColor }}
 					aria-hidden="true"
 				>
+					{isOnline && <span className={styles.onlineDot}></span>}
 					{profile.avatarUrl ? (
 						<img
 							src={profile.avatarUrl}
