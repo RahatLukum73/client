@@ -2,8 +2,8 @@
 	"git": {
 		"deploymentEnabled": {
 			"main": true,
-			"feature/spa-navigation": false,
-			"dev-branch": false
+			"feature/*": false,
+			"develop": false
 		}
 	},
 	"rewrites": [
