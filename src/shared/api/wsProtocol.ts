@@ -153,6 +153,21 @@ export type WsDeleteMessage = {
 	messageId: string
 }
 
+export type WsOnlineUsers = {
+	type: 'online_users'
+	userIds: string[]
+}
+
+export type WsUserOnline = {
+	type: 'user_online'
+	userId: string
+}
+
+export type WsUserOffline = {
+	type: 'user_offline'
+	userId: string
+}
+
 // ⚠️ ERROR
 export type WsErrorEvent = {
 	type: 'error'
@@ -181,6 +196,9 @@ export type WsServerEvent =
 	| WsMessageEvent
 	| WsMessageAck
 	| WsDeleteMessage
+	| WsOnlineUsers
+	| WsUserOnline
+	| WsUserOffline
 	| WsErrorEvent
 	| WsAdminNotice
 	| WsAdminClearUsers

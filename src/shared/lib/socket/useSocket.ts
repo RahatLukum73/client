@@ -115,9 +115,9 @@ function connectWs(url: string) {
 		try {
 			const msg = JSON.parse(raw) as WsServerEvent
 			emit(msg)
-		} catch {
-			// ignore
-		}
+		} catch (e) {
+		console.error(e)
+	}
 	}
 }
 

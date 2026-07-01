@@ -10,8 +10,6 @@ function urlBase64ToUint8Array(base64String: string): Uint8Array {
 
 export async function subscribeForPush(jwtToken: string): Promise<void> {
 	try {
-		console.log('[Push] subscribeForPush called')
-
 		if (!('serviceWorker' in navigator)) return
 		if (!('PushManager' in window)) return
 
@@ -34,8 +32,6 @@ export async function subscribeForPush(jwtToken: string): Promise<void> {
 					applicationServerKey as unknown as BufferSource,
 			})
 		}
-
-		console.log('[Push] endpoint:', subscription.endpoint)
 
 		const API_URL = import.meta.env.VITE_WS_URL.replace(
 			'wss://',
@@ -64,8 +60,6 @@ export async function subscribeForPush(jwtToken: string): Promise<void> {
 			)
 			return
 		}
-
-		console.log('[Push] Subscribed OK')
 	} catch (err) {
 		console.error('[Push] subscribeForPush error:', err)
 	}

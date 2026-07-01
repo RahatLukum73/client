@@ -25,10 +25,12 @@ export const onlineStore = {
 
 	setOnlineUsers(userIds: string[]) {
 		onlineUsers = new Set(userIds)
+		console.log('[OnlineStore] online_users', [...onlineUsers])
 		emit()
 	},
 
 	markOnline(userId: string) {
+		console.log('[OnlineStore] user_online', userId)
 		if (onlineUsers.has(userId)) return
 
 		onlineUsers = new Set(onlineUsers)
@@ -38,6 +40,7 @@ export const onlineStore = {
 	},
 
 	markOffline(userId: string) {
+		console.log('[OnlineStore] user_offline', userId)
 		if (!onlineUsers.has(userId)) return
 
 		onlineUsers = new Set(onlineUsers)

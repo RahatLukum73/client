@@ -7,6 +7,7 @@ import ProfilePage from '../pages/profile/ProfilePage'
 import SettingsPage from '../pages/settings/SettingsPage'
 import Layout from '../widgets/layout/Layout'
 import { fetchUsers, type ChatUser } from '../shared/api/users'
+import { onlineStore } from '../features/online/model/onlineStore'
 import { useSocket } from '../shared/lib/socket/useSocket'
 import type {
 	WsServerEvent,
@@ -238,6 +239,18 @@ export default function App() {
 				setMessages(msg.history)
 			}
 		}
+
+if (msg.type === 'online_users') {
+	onlineStore.setOnlineUsers(msg.userIds)
+}
+
+if (msg.type === 'user_online') {
+	onlineStore.markOnline(msg.userId)
+}
+
+if (msg.type === 'user_offline') {
+	onlineStore.markOffline(msg.userId)
+}
 
 		if (msg.type === 'join_rejected') {
 			setIsRestoring(false)
