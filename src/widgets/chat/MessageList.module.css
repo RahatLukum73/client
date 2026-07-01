@@ -105,20 +105,6 @@
 
 }
 
-.onlineDot {
-	position: absolute;
-	right: -2px;
-	bottom: -2px;
-
-	width: 10px;
-	height: 10px;
-
-	background: #22c55e;
-
-	border: 1px solid #1b1b1b;
-	border-radius: 50%;
-}
-
 .avatarImage {
 	width: 100%;
 	height: 100%;

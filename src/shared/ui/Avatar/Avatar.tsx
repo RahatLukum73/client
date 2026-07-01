@@ -1,4 +1,8 @@
+import { useOnlineUsers } from '../../../features/online/model/useOnlineUsers'
+import styles from './Avatar.module.css'
+
 type AvatarProps = {
+	userId: string
 	name: string
 	avatarUrl?: string
 	backgroundColor: string
@@ -6,15 +10,16 @@ type AvatarProps = {
 	size?: number
 }
 
-import styles from './Avatar.module.css'
-
 export default function Avatar({
+	userId,
 	name,
 	avatarUrl,
 	backgroundColor,
 	children,
 	size = 30,
 }: AvatarProps) {
+	const onlineUsers = useOnlineUsers()
+	const isOnline = onlineUsers.has(userId)
 	const avatarLetter = (name?.[0] ?? '?').toUpperCase()
 
 	return (
@@ -37,7 +42,7 @@ export default function Avatar({
 					avatarLetter
 				)}
 			</div>
-
+			{isOnline && <div className={styles.onlineDot}></div>}
 			{children}
 		</div>
 	)

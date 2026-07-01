@@ -3,7 +3,7 @@ import { getUsernameColor } from '../../shared/lib/hooks/getUsernameColor'
 import type { ChatMessage } from '../../shared/entities/message/model'
 import type { ChatProfile } from '../../features/auth/model/profile'
 import LinkifiedText from '../../shared/ui/LinkifiedText/LinkifiedText'
-import { useOnlineUsers } from '../../features/online/model/useOnlineUsers'
+import Avatar from '../../shared/ui/Avatar/Avatar'
 import styles from './MessageList.module.css'
 
 type MessageItemProps = {
@@ -23,11 +23,7 @@ export default function MessageItem(props: MessageItemProps) {
 	const { message, profile, onImageClick, onOpenDeleteConfirm } = props
 
 	const isSelf = message.author.id === profile.userId
-	const avatarLetter = (message.author.name?.[0] ?? '?').toUpperCase()
 	const authorColor = getUsernameColor(message.author.id)
-
-	const onlineUsers = useOnlineUsers()
-	const isOnline = onlineUsers.has(message.author.id)
 
 	const longPressProps = useLongPress({
 		onLongPress: () => onOpenDeleteConfirm(message.id, message.text, isSelf),
@@ -51,22 +47,12 @@ export default function MessageItem(props: MessageItemProps) {
 	return (
 		<div className={isSelf ? `${styles.row} ${styles.rowSelf}` : styles.row}>
 			{!isSelf ? (
-				<div
-					className={styles.avatar}
-					style={{ backgroundColor: authorColor }}
-					aria-hidden="true"
-				>
-				{isOnline && <span className={styles.onlineDot}></span>}
-					{message.author.avatarUrl ? (
-						<img
-							src={message.author.avatarUrl}
-							alt={message.author.name}
-							className={styles.avatarImage}
-						/>
-					) : (
-						avatarLetter
-					)}
-				</div>
+				<Avatar
+					userId={message.author.id}
+					name={message.author.name}
+					avatarUrl={message.author.avatarUrl}
+					backgroundColor={authorColor}
+				/>
 			) : null}
 
 			<div
@@ -137,22 +123,12 @@ export default function MessageItem(props: MessageItemProps) {
 			</div>
 
 			{isSelf ? (
-				<div
-					className={styles.avatar}
-					style={{ backgroundColor: authorColor }}
-					aria-hidden="true"
-				>
-					{isOnline && <span className={styles.onlineDot}></span>}
-					{profile.avatarUrl ? (
-						<img
-							src={profile.avatarUrl}
-							alt={profile.name}
-							className={styles.avatarImage}
-						/>
-					) : (
-						avatarLetter
-					)}
-				</div>
+				<Avatar
+					userId={profile.userId}
+					name={profile.name}
+					avatarUrl={profile.avatarUrl}
+					backgroundColor={authorColor}
+				/>
 			) : null}
 		</div>
 	)
