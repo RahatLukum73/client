@@ -183,7 +183,6 @@ export default function SettingsPage(props: SettingsPageProps) {
 								userId={u.id}
 								name={u.name}
 								avatarUrl={u.avatarUrl}
-								size={42}
 							/>
 							<div className={styles.userInfo}>
 								<div className={styles.userName}>

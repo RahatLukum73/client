@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import type { ChatProfile } from '../../features/auth/model/profile'
+import Avatar from '../../shared/ui/Avatar/Avatar'
 import styles from './ProfilePage.module.css'
 
 type ProfilePageProps = {
@@ -50,7 +51,7 @@ export default function ProfilePage(props: ProfilePageProps) {
 	}, [profile.avatarUrl, profile.userId])
 
 	// Аватар пользователя (буква или изображение)
-	const avatarLetter = profile.name.slice(0, 1).toUpperCase()
+	//const avatarLetter = profile.name.slice(0, 1).toUpperCase()
 
 	const handleNameSubmit = async (e: React.FormEvent) => {
 		e.preventDefault()
@@ -66,14 +67,17 @@ export default function ProfilePage(props: ProfilePageProps) {
 			const jwt = localStorage.getItem('jwt')
 			if (!jwt) throw new Error('Не авторизован')
 
-			const response = await fetch(`${import.meta.env.VITE_API_URL}/api/profile/name`, {
-				method: 'PUT',
-				headers: {
-					'Content-Type': 'application/json',
-					Authorization: `Bearer ${jwt}`,
-				},
-				body: JSON.stringify({ name: name.trim() }),
-			})
+			const response = await fetch(
+				`${import.meta.env.VITE_API_URL}/api/profile/name`,
+				{
+					method: 'PUT',
+					headers: {
+						'Content-Type': 'application/json',
+						Authorization: `Bearer ${jwt}`,
+					},
+					body: JSON.stringify({ name: name.trim() }),
+				}
+			)
 
 			if (!response.ok) {
 				const error = await response.json()
@@ -121,17 +125,20 @@ export default function ProfilePage(props: ProfilePageProps) {
 			const jwt = localStorage.getItem('jwt')
 			if (!jwt) throw new Error('Не авторизован')
 
-			const response = await fetch(`${import.meta.env.VITE_API_URL}/api/profile/password`, {
-				method: 'PUT',
-				headers: {
-					'Content-Type': 'application/json',
-					Authorization: `Bearer ${jwt}`,
-				},
-				body: JSON.stringify({
-					oldPassword,
-					newPassword,
-				}),
-			})
+			const response = await fetch(
+				`${import.meta.env.VITE_API_URL}/api/profile/password`,
+				{
+					method: 'PUT',
+					headers: {
+						'Content-Type': 'application/json',
+						Authorization: `Bearer ${jwt}`,
+					},
+					body: JSON.stringify({
+						oldPassword,
+						newPassword,
+					}),
+				}
+			)
 
 			if (!response.ok) {
 				const error = await response.json()
@@ -195,13 +202,16 @@ export default function ProfilePage(props: ProfilePageProps) {
 			const formData = new FormData()
 			formData.append('avatar', avatarFile)
 
-			const response = await fetch(`${import.meta.env.VITE_API_URL}/api/profile/avatar`, {
-				method: 'POST',
-				headers: {
-					Authorization: `Bearer ${jwt}`,
-				},
-				body: formData,
-			})
+			const response = await fetch(
+				`${import.meta.env.VITE_API_URL}/api/profile/avatar`,
+				{
+					method: 'POST',
+					headers: {
+						Authorization: `Bearer ${jwt}`,
+					},
+					body: formData,
+				}
+			)
 
 			if (!response.ok) {
 				const error = await response.json()
@@ -235,19 +245,13 @@ export default function ProfilePage(props: ProfilePageProps) {
 			<div className={styles.section}>
 				<h2 className={styles.sectionTitle}>Аватар</h2>
 				<div className={styles.avatarUpload}>
-					<div className={styles.avatar}>
-						{avatarPreview ? (
-							<img
-								src={avatarPreview}
-								alt="Предпросмотр"
-								className={styles.avatarPreview}
-							/>
-						) : (
-							<div className={styles.avatarPlaceholder}>
-								{avatarLetter}
-							</div>
-						)}
-					</div>
+					<Avatar
+						userId={profile.userId}
+						name={profile.name}
+						avatarUrl={avatarPreview ?? undefined}
+						showOnline={false}
+						size="lg"
+					/>
 					<div style={{ flex: 1 }}>
 						<input
 							type="file"

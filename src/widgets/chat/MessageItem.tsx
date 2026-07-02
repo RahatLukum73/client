@@ -51,7 +51,6 @@ export default function MessageItem(props: MessageItemProps) {
 					userId={message.author.id}
 					name={message.author.name}
 					avatarUrl={message.author.avatarUrl}
-					backgroundColor={authorColor}
 				/>
 			) : null}
 
@@ -127,7 +126,6 @@ export default function MessageItem(props: MessageItemProps) {
 					userId={profile.userId}
 					name={profile.name}
 					avatarUrl={profile.avatarUrl}
-					backgroundColor={authorColor}
 				/>
 			) : null}
 		</div>

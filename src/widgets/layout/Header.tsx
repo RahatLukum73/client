@@ -1,4 +1,5 @@
 import { NavLink } from 'react-router-dom'
+import Avatar from '../../shared/ui/Avatar/Avatar'
 import type { ChatProfile } from '../../features/auth/model/profile'
 import styles from './Header.module.css'
 
@@ -43,17 +44,12 @@ export default function Header(props: HeaderProps) {
 	return (
 		<div className={styles.header}>
 			<div className={styles.headerLeft}>
-				<div className={styles.avatar}>
-					{profile.avatarUrl ? (
-						<img
-							src={profile.avatarUrl}
-							alt={profile.name}
-							className={styles.avatarImage}
-						/>
-					) : (
-						profile.name.slice(0, 1).toUpperCase()
-					)}
-				</div>
+				<Avatar
+					userId={profile.userId}
+					name={profile.name}
+					avatarUrl={profile.avatarUrl}
+					showOnline={false}
+				/>
 				<div className={styles.userInfo}>
 					<div className={styles.userName}>{profile.name}</div>
 					<div className={styles.adminRow}>

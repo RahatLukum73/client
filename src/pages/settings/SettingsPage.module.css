@@ -134,7 +134,7 @@
 	border-radius: 8px;
 }
 
-.userAvatar {
+/* .userAvatar {
 	width: 36px;
 	height: 36px;
 	border-radius: 999px;
@@ -151,7 +151,9 @@
 	width: 100%;
 	height: 100%;
 	object-fit: cover;
-}
+} */
+
+
 
 .userInfo {
 	flex: 1;
