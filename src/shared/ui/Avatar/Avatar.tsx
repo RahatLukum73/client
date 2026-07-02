@@ -5,18 +5,20 @@ type AvatarProps = {
 	userId: string
 	name: string
 	avatarUrl?: string
-	backgroundColor: string
 	children?: React.ReactNode
 	size?: number
+	showOnline?: boolean
+	showBorder?: boolean
 }
 
 export default function Avatar({
 	userId,
 	name,
 	avatarUrl,
-	backgroundColor,
 	children,
 	size = 30,
+	showOnline = true,
+	showBorder = false,
 }: AvatarProps) {
 	const onlineUsers = useOnlineUsers()
 	const isOnline = onlineUsers.has(userId)
@@ -31,10 +33,9 @@ export default function Avatar({
 			}}
 		>
 			<div
-				className={styles.avatar}
-				style={{
-					backgroundColor,
-				}}
+				className={`${styles.avatar} ${
+					showBorder ? styles.avatarBorder : ''
+				}`}
 			>
 				{avatarUrl ? (
 					<img src={avatarUrl} alt={name} className={styles.image} />
@@ -42,7 +43,7 @@ export default function Avatar({
 					avatarLetter
 				)}
 			</div>
-			{isOnline && <div className={styles.onlineDot}></div>}
+			{showOnline && isOnline && <div className={styles.onlineDot}></div>}
 			{children}
 		</div>
 	)

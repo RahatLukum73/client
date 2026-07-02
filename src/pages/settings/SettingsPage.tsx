@@ -4,6 +4,7 @@ import type { ChatProfile } from '../../features/auth/model/profile'
 import type { ChatUser } from '../../shared/api/users'
 import AdminPanel from '../../widgets/admin/AdminPanel'
 import ConfirmModal from '../../shared/ui/ConfirmModal/ConfirmModal'
+import Avatar from '../../shared/ui/Avatar/Avatar'
 import { useServiceWorker } from '../../shared/lib/useServiceWorker'
 import styles from './SettingsPage.module.css'
 
@@ -178,13 +179,12 @@ export default function SettingsPage(props: SettingsPageProps) {
 				>
 					{users.map((u) => (
 						<div key={u.id} className={styles.userItem}>
-							<div className={styles.userAvatar}>
-								{u.avatarUrl ? (
-									<img src={u.avatarUrl} alt={u.name} />
-								) : (
-									u.name[0].toUpperCase()
-								)}
-							</div>
+							<Avatar
+								userId={u.id}
+								name={u.name}
+								avatarUrl={u.avatarUrl}
+								size={42}
+							/>
 							<div className={styles.userInfo}>
 								<div className={styles.userName}>
 									{u.name}
